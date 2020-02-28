@@ -13,19 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+Route::get('posts', 'PostsController@posts');
+Route::get('pagemeta', 'PageMetaController@PageMeta');
+Route::get('navs', 'NavController@Navbar');
+Route::get('restaurantsandbars', 'RestaurantController@Restaurants');
+Route::get('gallery', 'GalleryController@Gallery');
+Route::get('around_vanuatu', 'AroundVanuatuCategoriesController@AroundVanuatuCategories');
+Route::get('around_vanuatu_sublist', 'AroundVanuatuSubCategoriesController@AroundVanuatuSubCategories');
+Route::get('events', 'EventsController@Events');
+Route::get('retailandservices', 'RetailAndServicesController@RetailAndService');
+Route::get('foodanddiningout', 'FoodAndDiningOutController@FoodAndDiningOut');
+Route::get('holidayinnresortvanauatucate', 'HolidayInnResortVanuatucategoriesController@HolidayInnResortVanuatuCategories');
 
-Route::get('posts', 'PostsPostsController@posts');
-Route::get('pagemeta', 'ControllerPageMeta@PageMeta');
-Route::get('navs', 'ControllerNav@Navbar');
-Route::get('restaurantsandbars', 'ControllerRestaurants@Restaurants');
-Route::get('gallery', 'ControllerGallery@Gallery');
-Route::get('around_vanuatu', 'ControllerAroundVanuatuCategories@AroundVanuatuCategories');
-Route::get('around_vanuatu_sublist', 'ControllerAroundVanuatuSubCategories@AroundVanuatuSubCategories');
-Route::get('events', 'ControllerEventsController@Events');
-Route::get('retailandservices', 'ControllerRetailAndService@RetailAndService');
-Route::get('foodanddiningout', 'ControllerFoodAndDiningOut@FoodAndDiningOut');
-Route::get('holidayinnresortvanauatucate', 'ControllerHolidayInnResortVanuatuCategories@HolidayInnResortVanuatuCategories');
-Route::get('holidayinnresortvanauatusubpage', 'ControllerHolidayInnResortVanuatuSubPage@HolidayInnResortVanuatuSubPage');
+
