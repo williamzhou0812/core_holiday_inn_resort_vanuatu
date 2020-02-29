@@ -8,6 +8,7 @@
     <meta name="description" content="admin login">
     <title>Admin - {{ Voyager::setting("admin.title") }}</title>
     <link rel="stylesheet" href="{{ voyager_asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ voyager_asset('css/the-core.css') }}">
     @if (__('voyager::generic.is_rtl') == 'true')
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.css">
         <link rel="stylesheet" href="{{ voyager_asset('css/rtl.css') }}">
@@ -55,6 +56,9 @@
 
             <div class="login-container">
 
+                <div class="the-core-login-logo">
+                    <img alt="logo" src="{{ Voyager::image( Voyager::setting("admin.site_logo"), voyager_asset("images/the-core-logo.png") ) }}"/>
+                </div>
                 <p>{{ __('voyager::login.signin_below') }}</p>
 
                 <form action="{{ route('voyager.login') }}" method="POST">
@@ -97,9 +101,10 @@
                 </ul>
               </div>
               @endif
-
             </div> <!-- .login-container -->
-
+             <div class="login-footer">
+                &copy; 2020 John Batman Group
+             </div>
         </div> <!-- .login-sidebar -->
     </div> <!-- .row -->
 </div> <!-- .container-fluid -->
