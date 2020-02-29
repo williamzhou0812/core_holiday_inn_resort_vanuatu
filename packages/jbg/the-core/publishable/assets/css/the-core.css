@@ -1,0 +1,19 @@
+.the-core-login-logo {
+    margin-bottom: 20px;
+    margin-left: -10px;
+}
+.the-core-login-logo img {
+    width: 225px;
+}
+body.login .login-sidebar {
+    border-top-style: none !important;
+}
+body.login .login-container {
+    margin-top: -300px;
+}
+.login-footer {
+    font-size: 10px;
+    position: absolute;
+    bottom: 10px;
+    padding-left: 30px;
+}
