@@ -26,7 +26,6 @@
         "fruitcake/laravel-cors": "^1.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^2.0",
-        "tcg/voyager": "^1.3",
         "jbg/the-core": "@dev"
     },
     "require-dev": {
