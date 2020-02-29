@@ -28,3 +28,9 @@ body.login .login-container {
     background-image: url('/admin/voyager-assets?path=images%2Fthe-core-sidebar-logo.png');
     background-size: 128px 40px;
 }
+.side-menu .navbar .side-menu-container .panel {
+    background-color:  #3E3E3E !important;
+}
+.side-menu .navbar.navbar-default {
+    background-color: black !important;
+}

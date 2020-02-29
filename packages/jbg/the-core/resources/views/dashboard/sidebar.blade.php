@@ -10,9 +10,8 @@
                 </a>
             </div><!-- .navbar-header -->
 
-            <div class="panel widget center bgimage"
-                 style="background-image:url({{ Voyager::image( Voyager::setting('admin.bg_image'), voyager_asset('images/bg.jpg') ) }}); background-size: cover; background-position: 0px;">
-                <div class="dimmer"></div>
+            <div class="panel widget center">
+
                 <div class="panel-content">
                     <img src="{{ $user_avatar }}" class="avatar" alt="{{ Auth::user()->name }} avatar">
                     <h4>{{ ucwords(Auth::user()->name) }}</h4>
