@@ -17,3 +17,14 @@ body.login .login-container {
     bottom: 10px;
     padding-left: 30px;
 }
+.logo-icon-container {
+    width: 150px !important;
+    background-image: url('/admin/voyager-assets?path=images%2Fthe-core-sidebar-logo-no-text.png');
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+}
+.side-menu:hover:hover .logo-icon-container{
+    background-image: url('/admin/voyager-assets?path=images%2Fthe-core-sidebar-logo.png');
+    background-size: 128px 40px;
+}

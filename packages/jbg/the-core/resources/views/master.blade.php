@@ -49,6 +49,7 @@
         @foreach(config('voyager.additional_css') as $css)<link rel="stylesheet" type="text/css" href="{{ asset($css) }}">@endforeach
     @endif
 
+    <link rel="stylesheet" href="{{ voyager_asset('css/the-core.css') }}">
     @yield('head')
 </head>
 
