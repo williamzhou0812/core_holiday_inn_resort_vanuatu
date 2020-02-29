@@ -184,6 +184,7 @@ return [
     */
 
     'primary_color' => '#22A7F0',
+    'sidebar_icon_color' => 'white',
 
     'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
 
