@@ -17,3 +17,30 @@ body.login .login-container {
     bottom: 10px;
     padding-left: 30px;
 }
+.logo-icon-container {
+    width: 150px !important;
+    background-image: url('/admin/voyager-assets?path=images%2Fthe-core-sidebar-logo-no-text.png');
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+}
+.side-menu:hover:hover .logo-icon-container{
+    background-image: url('/admin/voyager-assets?path=images%2Fthe-core-sidebar-logo.png');
+    background-size: 128px 40px;
+}
+.side-menu .navbar .side-menu-container .panel {
+    background-color:  #3E3E3E !important;
+}
+.side-menu .navbar.navbar-default {
+    background-color: black !important;
+}
+.side-menu .navbar .side-menu-container .panel .panel-content h4 {
+    font-size: 13px !important;
+}
+.app-container .content-container .side-menu .navbar-nav li a {
+    font-size: 13px !important;
+}
+.app-container .content-container .side-menu .navbar-nav li a {
+    height: 35px !important;
+    line-height: 35px !important;
+}

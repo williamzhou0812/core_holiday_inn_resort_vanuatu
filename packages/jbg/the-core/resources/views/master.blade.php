@@ -31,8 +31,8 @@
     <!-- Few Dynamic Styles -->
     <style type="text/css">
         .voyager .side-menu .navbar-header {
-            background:{{ config('voyager.primary_color','#22A7F0') }};
-            border-color:{{ config('voyager.primary_color','#22A7F0') }};
+            background:{{ config('voyager.sidebar_icon_color','white') }};
+            border-color:{{ config('voyager.sidebar_icon_color','white') }};
         }
         .widget .btn-primary{
             border-color:{{ config('voyager.primary_color','#22A7F0') }};
@@ -49,6 +49,7 @@
         @foreach(config('voyager.additional_css') as $css)<link rel="stylesheet" type="text/css" href="{{ asset($css) }}">@endforeach
     @endif
 
+    <link rel="stylesheet" href="{{ voyager_asset('css/the-core.css') }}">
     @yield('head')
 </head>
 
