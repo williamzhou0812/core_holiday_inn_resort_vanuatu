@@ -1,4 +1,4 @@
-# Versioning for Voyager
+# Versioning for Voyager 1.3
 
 We try to follow [semver](http://semver.org/) versioning standards as best we can.
 

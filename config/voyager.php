@@ -133,9 +133,8 @@ return [
                 'icon_class' => 'voyager-person',
             ],
             'voyager::generic.home' => [
-                'route'        => '/',
+                'route'        => '/admin',
                 'icon_class'   => 'voyager-home',
-                'target_blank' => true,
             ],
             'voyager::generic.logout' => [
                 'route'      => 'voyager.logout',
