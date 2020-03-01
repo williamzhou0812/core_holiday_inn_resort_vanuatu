@@ -34,3 +34,13 @@ body.login .login-container {
 .side-menu .navbar.navbar-default {
     background-color: black !important;
 }
+.side-menu .navbar .side-menu-container .panel .panel-content h4 {
+    font-size: 13px !important;
+}
+.app-container .content-container .side-menu .navbar-nav li a {
+    font-size: 13px !important;
+}
+.app-container .content-container .side-menu .navbar-nav li a {
+    height: 35px !important;
+    line-height: 35px !important;
+}
