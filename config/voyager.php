@@ -133,9 +133,8 @@ return [
                 'icon_class' => 'voyager-person',
             ],
             'voyager::generic.home' => [
-                'route'        => '/',
+                'route'        => '/admin',
                 'icon_class'   => 'voyager-home',
-                'target_blank' => true,
             ],
             'voyager::generic.logout' => [
                 'route'      => 'voyager.logout',
@@ -184,6 +183,7 @@ return [
     */
 
     'primary_color' => '#22A7F0',
+    'sidebar_icon_color' => 'white',
 
     'show_dev_tips' => true, // Show development tip "How To Use:" in Menu and Settings
 

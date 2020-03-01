@@ -122,7 +122,13 @@
                                                 @if (isset($row->details->view))
                                                     @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $data->{$row->field}, 'action' => 'browse', 'view' => 'browse', 'options' => $row->details])
                                                 @elseif($row->type == 'image')
-                                                    <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:100px">
+                                                    @php
+                                                        $row_image_width = '100px';
+                                                        if (property_exists($row->details, 'browse_image_width')) {
+                                                            $row_image_width = $row->details->browse_image_width;
+                                                        }
+                                                    @endphp
+                                                    <img src="@if( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)){{ Voyager::image( $data->{$row->field} ) }}@else{{ $data->{$row->field} }}@endif" style="width:{{ $row_image_width }}">
                                                 @elseif($row->type == 'relationship')
                                                     @include('voyager::formfields.relationship', ['view' => 'browse','options' => $row->details])
                                                 @elseif($row->type == 'select_multiple')
