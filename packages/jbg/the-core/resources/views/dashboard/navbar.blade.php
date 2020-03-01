@@ -11,10 +11,10 @@
                 $url = route('voyager.dashboard');
                 @endphp
                 @if(count($segments) == 0)
-                    <li class="active"><i class="voyager-boat"></i> {{ __('voyager::generic.dashboard') }}</li>
+                    <li class="active"><i class="voyager-dashboard"></i> {{ __('voyager::generic.dashboard') }}</li>
                 @else
                     <li class="active">
-                        <a href="{{ route('voyager.dashboard')}}"><i class="voyager-boat"></i> {{ __('voyager::generic.dashboard') }}</a>
+                        <a href="{{ route('voyager.dashboard')}}"><i class="voyager-dashboard"></i> {{ __('voyager::generic.dashboard') }}</a>
                     </li>
                     @foreach ($segments as $segment)
                         @php

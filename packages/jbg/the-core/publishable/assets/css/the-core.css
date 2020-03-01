@@ -44,3 +44,11 @@ body.login .login-container {
     height: 35px !important;
     line-height: 35px !important;
 }
+.content-welcome p.welcome-text {
+    font-size: 21px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    color: #000000;
+}
