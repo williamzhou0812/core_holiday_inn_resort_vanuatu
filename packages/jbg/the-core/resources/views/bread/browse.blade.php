@@ -75,6 +75,17 @@
                             </form>
                         @endif
                         <div class="table-responsive">
+                            @php
+                                // check if position attribute exists
+                                // only works for position field exist and allow browse
+                                $showPositioning = false;
+                                foreach($dataType->browseRows as $row) {
+                                    if ($row->field === "position" && $row->edit === 1) {
+                                        $showPositioning = true;
+                                        break;
+                                    }
+                                }
+                            @endphp
                             <table id="dataTable" class="table table-hover">
                                 <thead>
                                     <tr>
@@ -82,6 +93,9 @@
                                             <th>
                                                 <input type="checkbox" class="select_all">
                                             </th>
+                                        @endif
+                                        @if($showPositioning)
+                                            <th><!-- positioning --></th>
                                         @endif
                                         @foreach($dataType->browseRows as $row)
                                         <th>
@@ -110,6 +124,12 @@
                                         @if($showCheckboxColumn)
                                             <td>
                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
+                                            </td>
+                                        @endif
+                                        @if($showPositioning)
+                                            <td class="positioning-panel">
+                                                <button type="button" class="btn btn-xs btn-primary btn-pos-up"><i class="voyager-angle-up"></i></button>
+                                                <button type="button" class="btn btn-xs btn-primary btn-pos-down"><i class="voyager-angle-down"></i></button>
                                             </td>
                                         @endif
                                         @foreach($dataType->browseRows as $row)
