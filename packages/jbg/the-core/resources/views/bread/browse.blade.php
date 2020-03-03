@@ -429,7 +429,8 @@
                         order: JSON.stringify(orderingObjs),
                         _token: '{{ csrf_token() }}'
                     }, function (data) {
-                        toastr.success("{{ __('voyager::bread.updated_order') }}");
+                        // reload
+                        location.reload();
                     });
                 }
             }
