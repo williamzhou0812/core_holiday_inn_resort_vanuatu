@@ -27,5 +27,6 @@ Route::get('events', 'EventsController@Events');
 Route::get('retailandservices', 'RetailAndServicesController@RetailAndService');
 Route::get('foodanddiningout', 'FoodAndDiningOutController@FoodAndDiningOut');
 Route::get('holidayinnresortvanauatucate', 'HolidayInnResortVanuatucategoriesController@HolidayInnResortVanuatuCategories');
+Route::get('sections', 'SectionsController@sections');
 
 
