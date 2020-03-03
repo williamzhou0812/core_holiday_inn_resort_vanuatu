@@ -146,10 +146,18 @@ class VoyagerBaseController extends Controller
             }
         }
 
+        // Define show order button
+        $showPositioning = (isset($dataType->order_column));
+        $columnAlign = 0;
+        if ($showCheckboxColumn)
+            $columnAlign++;
+        if ($showPositioning)
+            $columnAlign++;
+
         // Define orderColumn
         $orderColumn = [];
         if ($orderBy) {
-            $index = $dataType->browseRows->where('field', $orderBy)->keys()->first() + ($showCheckboxColumn ? 1 : 0);
+            $index = $dataType->browseRows->where('field', $orderBy)->keys()->first() + $columnAlign;
             $orderColumn = [[$index, 'desc']];
             if (!$sortOrder && isset($dataType->order_direction)) {
                 $sortOrder = $dataType->order_direction;

@@ -69,7 +69,7 @@ h4 {
 #dataTable .positioning-panel {
     white-space: nowrap;
 }
-#dataTable .btn-pos-up,
-#dataTable .btn-pos-down{
+
+#dataTable .btn-pos{
     padding: 1.5px 4px 1.5px 4px!important;
 }
