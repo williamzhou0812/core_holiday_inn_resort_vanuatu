@@ -19,6 +19,7 @@ use Larapack\DoctrineSupport\DoctrineSupportServiceProvider;
 use Larapack\VoyagerHooks\VoyagerHooksServiceProvider;
 use TCG\Voyager\Events\FormFieldsRegistered;
 use TCG\Voyager\Facades\Voyager as VoyagerFacade;
+use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\FormFields\After\DescriptionHandler;
 use TCG\Voyager\Http\Middleware\VoyagerAdminMiddleware;
 use TCG\Voyager\Models\MenuItem;
@@ -29,8 +30,12 @@ use TCG\Voyager\Policies\SettingPolicy;
 use TCG\Voyager\Providers\VoyagerDummyServiceProvider;
 use TCG\Voyager\Providers\VoyagerEventServiceProvider;
 use TCG\Voyager\Translator\Collection as TranslatorCollection;
+use TCG\Voyager\FormFields\SubSectionHandler;
 
 class TheCoreServiceProvider extends VoyagerServiceProvider
 {
-
+    public function register() {
+        parent::register();
+        Voyager::addFormField(SubSectionHandler::class);
+    }
 }
