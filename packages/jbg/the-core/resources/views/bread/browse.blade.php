@@ -37,6 +37,9 @@
 @stop
 
 @section('content')
+    @php
+        $showPositioning = (isset($dataType->order_column));
+    @endphp
     <div class="page-content browse container-fluid">
         @include('voyager::alerts')
         <div class="row">
@@ -75,17 +78,6 @@
                             </form>
                         @endif
                         <div class="table-responsive">
-                            @php
-                                // check if position attribute exists
-                                // only works for position field exist and allow browse
-                                $showPositioning = false;
-                                foreach($dataType->browseRows as $row) {
-                                    if ($row->field === "position" && $row->edit === 1) {
-                                        $showPositioning = true;
-                                        break;
-                                    }
-                                }
-                            @endphp
                             <table id="dataTable" class="table table-hover">
                                 <thead>
                                     <tr>
@@ -128,8 +120,8 @@
                                         @endif
                                         @if($showPositioning)
                                             <td class="positioning-panel">
-                                                <button type="button" class="btn btn-xs btn-primary btn-pos-up"><i class="voyager-angle-up"></i></button>
-                                                <button type="button" class="btn btn-xs btn-primary btn-pos-down"><i class="voyager-angle-down"></i></button>
+                                                <button type="button" class="btn btn-xs btn-primary btn-pos" data-pos="up" data-id="{{ $data->id }}"><i class="voyager-angle-up"></i></button>
+                                                <button type="button" class="btn btn-xs btn-primary btn-pos" data-pos="down" data-id="{{ $data->id }}"><i class="voyager-angle-down"></i></button>
                                             </td>
                                         @endif
                                         @foreach($dataType->browseRows as $row)
@@ -380,6 +372,68 @@
         $('td').on('click', '.delete', function (e) {
             $('#delete_form')[0].action = '{{ route('voyager.'.$dataType->slug.'.destroy', '__id') }}'.replace('__id', $(this).data('id'));
             $('#delete_modal').modal('show');
+        });
+
+        @if($showPositioning)
+            @php
+                $orderedContentData = array();
+                $order_column = $dataType->order_column;
+                foreach($dataTypeContent as $contentData) {
+                    $orderedContentData[] = array( 'id' =>$contentData->id, 'ordering' => $contentData->$order_column);
+                }
+                usort($orderedContentData, function($a, $b) {
+                    if ($a['ordering'] < $b['ordering'])
+                        return -1;
+                    else if ($a['ordering'] > $b['ordering'])
+                        return 1;
+                    return 0;
+                });
+            @endphp
+            // collection of IDs
+            var ordering_ids = [
+            @foreach($orderedContentData as $contentData)
+               {{ $contentData['id'] }},
+            @endforeach
+            ];
+        @endif
+
+        $('td').on('click', '.btn-pos', function (e) {
+            if (ordering_ids.length > 1) {
+                var id = $(this).data('id');
+                var pos = $(this).data('pos');
+                var idx = ordering_ids.indexOf(id);
+                var newOrdering = ordering_ids.slice();
+                var changed = false;
+                if (idx >= 0) {
+                    if (pos == 'up' && idx > 0) {
+                        var tmp = newOrdering[idx-1];
+                        newOrdering[idx-1] = id;
+                        newOrdering[idx] = tmp;
+                        changed = true;
+                    }
+                    else if (pos == 'down' && idx != ordering_ids.length - 1) {
+                        var tmp = newOrdering[idx+1];
+                        newOrdering[idx+1] = id;
+                        newOrdering[idx] = tmp;
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    var orderingObjs = [];
+                    for(var i=0; i<newOrdering.length; i++) {
+                        var orderingObj = new Object;
+                        orderingObj['id'] = newOrdering[i];
+                        orderingObjs.push(orderingObj);
+                    }
+                    $.post('{{ route('voyager.'.$dataType->slug.'.order') }}', {
+                        order: JSON.stringify(orderingObjs),
+                        _token: '{{ csrf_token() }}'
+                    }, function (data) {
+                        // reload
+                        location.reload();
+                    });
+                }
+            }
         });
 
         @if($usesSoftDeletes)
