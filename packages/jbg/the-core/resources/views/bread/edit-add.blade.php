@@ -209,6 +209,16 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+            @foreach($dataTypeRows as $row)
+                @if ($row->type === "sub_section_form")
+                    $('#subsection_dtable_{{ $row->field }}').DataTable({
+                        paging: false,
+                        searching: false,
+                        "info": false
+                    });
+                @endif
+            @endforeach
         });
     </script>
 @stop
