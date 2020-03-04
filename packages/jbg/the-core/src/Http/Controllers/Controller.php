@@ -236,6 +236,7 @@ abstract class Controller extends BaseController
                 return (new Password($request, $slug, $row, $options))->handle();
             /********** CHECKBOX TYPE **********/
             case 'checkbox':
+            case 'visible_checkbox':
                 return (new Checkbox($request, $slug, $row, $options))->handle();
             /********** MULTIPLE CHECKBOX TYPE **********/
             case 'multiple_checkbox':

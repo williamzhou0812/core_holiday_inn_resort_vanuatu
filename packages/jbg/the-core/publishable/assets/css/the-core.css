@@ -73,3 +73,10 @@ h4 {
 #dataTable .btn-pos{
     padding: 1.5px 4px 1.5px 4px!important;
 }
+.visible_chk_panel .glyphicon {
+    font-size: 16px;
+    margin-right: 8px;
+}
+.visible_chk_panel .el-switch {
+    margin-right: 8px;
+}
