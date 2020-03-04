@@ -31,11 +31,13 @@ use TCG\Voyager\Providers\VoyagerDummyServiceProvider;
 use TCG\Voyager\Providers\VoyagerEventServiceProvider;
 use TCG\Voyager\Translator\Collection as TranslatorCollection;
 use TCG\Voyager\FormFields\SubSectionHandler;
+use TCG\Voyager\FormFields\VisibleHandler;
 
 class TheCoreServiceProvider extends VoyagerServiceProvider
 {
     public function register() {
         parent::register();
         Voyager::addFormField(SubSectionHandler::class);
+        Voyager::addFormField(VisibleHandler::class);
     }
 }
