@@ -125,6 +125,21 @@
                                         {{ __('voyager::generic.download') }}
                                     </a>
                                 @endif
+                            @elseif($row->type == 'visible_checkbox')
+                                @php
+                                    $visible_checked = false;
+                                    if (property_exists($row->details, 'on') && property_exists($row->details, 'off')) {
+                                        $visible_checked = ($dataTypeContent->{$row->field});
+                                    }
+                                    else {
+                                        $visible_checked = strval($dataTypeContent->{$row->field}) == '1';
+                                    }
+                                @endphp
+                                @if($visible_checked)
+                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                @else
+                                    <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                                @endif
                             @else
                                 @include('voyager::multilingual.input-hidden-bread-read')
                                 <p>{{ $dataTypeContent->{$row->field} }}</p>
