@@ -262,6 +262,21 @@
                                                     @else
                                                         {{ trans_choice('voyager::media.files', 0) }}
                                                     @endif
+                                                @elseif($row->type == 'visible_checkbox')
+                                                    @php
+                                                        $visible_checked = false;
+                                                        if (property_exists($row->details, 'on') && property_exists($row->details, 'off')) {
+                                                            $visible_checked = $data->{$row->field};
+                                                        }
+                                                        else {
+                                                            $visible_checked = strval($data->{$row->field}) == '1';
+                                                        }
+                                                    @endphp
+                                                    @if($visible_checked)
+                                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                                    @else
+                                                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                                                    @endif
                                                 @else
                                                     @include('voyager::multilingual.input-hidden-bread-browse')
                                                     <span>{{ $data->{$row->field} }}</span>
