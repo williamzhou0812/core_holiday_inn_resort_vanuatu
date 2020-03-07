@@ -12,6 +12,7 @@ return [
     'are_you_sure_delete'    => 'Are you sure you want to delete',
     'ascending'              => 'Ascending',
     'auto_increment'         => 'Auto Increment',
+    'avatar'         => 'Avatar',
     'bread'                  => 'BREAD',
     'browse'                 => 'Browse',
     'builder'                => 'Builder',

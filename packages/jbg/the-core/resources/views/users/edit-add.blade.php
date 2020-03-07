@@ -71,7 +71,7 @@
                                     @endphp
                                     @include('voyager::formfields.relationship')
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" style="display: none">
                                     <label for="additional_roles">{{ __('voyager::profile.roles_additional') }}</label>
                                     @php
                                         $row     = $dataTypeRows->where('field', 'user_belongstomany_role_relationship')->first();
@@ -88,7 +88,7 @@
                             }
 
                             @endphp
-                            <div class="form-group">
+                            <div class="form-group" style="display: none">
                                 <label for="locale">{{ __('voyager::generic.locale') }}</label>
                                 <select class="form-control select2" id="locale" name="locale">
                                     @foreach (Voyager::getLocales() as $locale)
@@ -105,6 +105,7 @@
                     <div class="panel panel panel-bordered panel-warning">
                         <div class="panel-body">
                             <div class="form-group">
+                                <label for="name">{{ __('voyager::generic.avatar') }}</label>
                                 @if(isset($dataTypeContent->avatar))
                                     <img src="{{ filter_var($dataTypeContent->avatar, FILTER_VALIDATE_URL) ? $dataTypeContent->avatar : Voyager::image( $dataTypeContent->avatar ) }}" style="width:200px; height:auto; clear:both; display:block; padding:2px; border:1px solid #ddd; margin-bottom:10px;" />
                                 @endif
@@ -115,7 +116,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary pull-right save">
+            <button type="submit" class="btn btn-primary save" style="margin-left: 20px">
                 {{ __('voyager::generic.save') }}
             </button>
         </form>

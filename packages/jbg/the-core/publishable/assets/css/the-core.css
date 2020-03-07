@@ -96,7 +96,22 @@ h4 {
 }
 .profile .profile-body H5{
     font-size: 13px;
+    text-align: left;
+}
+.navbar .dropdown.profile .dropdown-menu h5,
+.navbar .dropdown.profile .dropdown-menu h6{
+    float: none !important;
+    text-align: left;
 }
 .profile ul li a {
     font-size: 13px;
+}
+a.permission-select-all,
+a.permission-deselect-all {
+    color: #22A7F0;
+}
+.panel-title {
+    font-size: 14px;
+    padding-top: 0px;
+    padding-bottom: 10px !important;
 }
