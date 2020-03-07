@@ -35,6 +35,11 @@ Route::group(['as' => 'voyager.'], function () {
 
         Route::get('profile', ['uses' => $namespacePrefix.'VoyagerUserController@profile', 'as' => 'profile']);
 
+
+        // Role Routes
+        Route::resource('roles', $namespacePrefix.'VoyagerRoleController');
+
+
         try {
             foreach (Voyager::model('DataType')::all() as $dataType) {
                 $breadController = $dataType->controller
@@ -54,9 +59,6 @@ Route::group(['as' => 'voyager.'], function () {
         } catch (\Exception $e) {
             // do nothing, might just be because table not yet migrated.
         }
-
-        // Role Routes
-        Route::resource('roles', $namespacePrefix.'VoyagerRoleController');
 
         // Menu Routes
         Route::group([

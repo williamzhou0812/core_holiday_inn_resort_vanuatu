@@ -138,7 +138,6 @@ return [
             ],
             'voyager::generic.logout' => [
                 'route'      => 'voyager.logout',
-                'icon_class' => 'voyager-power',
             ],
         ],
 
