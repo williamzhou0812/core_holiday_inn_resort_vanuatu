@@ -116,7 +116,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary pull-right save">
+            <button type="submit" class="btn btn-primary save" style="margin-left: 20px">
                 {{ __('voyager::generic.save') }}
             </button>
         </form>
