@@ -53,7 +53,16 @@
                             @if (isset($row->details->view))
                                 @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $dataTypeContent->{$row->field}, 'action' => 'read', 'view' => 'read', 'options' => $row->details])
                             @elseif($row->type == "image")
+                                @php
+                                    $view_img_width = '';
+                                    if (property_exists($row->details, 'view_image_width')) {
+                                        $view_img_width = $row->details->view_image_width;
+                                    }
+                                @endphp
                                 <img class="img-responsive"
+                                    @if (!empty($view_img_width))
+                                     width="{{ $view_img_width }}"
+                                    @endif
                                      src="{{ filter_var($dataTypeContent->{$row->field}, FILTER_VALIDATE_URL) ? $dataTypeContent->{$row->field} : Voyager::image($dataTypeContent->{$row->field}) }}">
                             @elseif($row->type == 'multiple_images')
                                 @if(json_decode($dataTypeContent->{$row->field}))

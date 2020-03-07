@@ -110,3 +110,8 @@ a.permission-select-all,
 a.permission-deselect-all {
     color: #22A7F0;
 }
+.panel-title {
+    font-size: 14px;
+    padding-top: 0px;
+    padding-bottom: 10px !important;
+}
