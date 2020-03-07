@@ -106,3 +106,7 @@ h4 {
 .profile ul li a {
     font-size: 13px;
 }
+a.permission-select-all,
+a.permission-deselect-all {
+    color: #22A7F0;
+}
