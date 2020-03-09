@@ -126,3 +126,6 @@ a.permission-deselect-all {
 .subsection_dtable_panel th.sorting_desc {
     border-bottom-color: lightgray;
 }
+.subsection_dtable_panel .col-sm-12  {
+    width: auto;
+}
