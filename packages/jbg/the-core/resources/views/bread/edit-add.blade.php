@@ -20,6 +20,11 @@
 @stop
 
 @section('content')
+    <script>
+        var subDataTables = [];
+        var subDataSources = [];
+        var subDataColumns =[];
+    </script>
     <div class="page-content edit-add container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -161,6 +166,16 @@
           };
         }
 
+        function reloadDataTable(fieldName) {
+            var subDataTable = subDataTables[fieldName];
+            var subDataSource = subDataSources[fieldName];
+            subDataTable.clear();
+            subDataTable.rows.add(subDataSource);
+            subDataTable.draw();
+        }
+
+        var hahaha="sss";
+
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
 
@@ -212,11 +227,14 @@
 
             @foreach($dataTypeRows as $row)
                 @if ($row->type === "sub_section_form")
-                    $('#subsection_dtable_{{ $row->field }}').DataTable({
+                    var subDataTable = $('#subsection_dtable_{{ $row->field }}').DataTable({
+                        data: subDataSources['{{ $row->field }}'],
+                        columns: subDataColumns['{{ $row->field }}'],
                         paging: false,
                         searching: false,
                         "info": false
                     });
+                    subDataTables['{{ $row->field }}'] = subDataTable;
                 @endif
             @endforeach
         });
