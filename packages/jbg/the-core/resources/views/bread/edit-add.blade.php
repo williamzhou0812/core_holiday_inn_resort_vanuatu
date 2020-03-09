@@ -173,8 +173,53 @@
             subDataTable.rows.add(subDataSource);
             subDataTable.draw();
         }
-
-        var hahaha="sss";
+        function editDataTableUpDown(fieldName, id, up, sortFor) {
+            // get data source
+            var subDataSource = subDataSources[fieldName];
+            if (subDataSource.length < 2)
+                return; // nothing to change
+            // sort asc
+            subDataSource.sort(function(a, b) {
+                var compA = parseInt(a[sortFor]);
+                var compB = parseInt(b[sortFor]);
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+            // find the index of current id
+            var idx = -1;
+            var found = null;
+            for(var i=0; i<subDataSource.length; i++) {
+                // set index if found
+                if (subDataSource[i]['id'] == id) {
+                    idx = i;
+                    found = subDataSource[i];
+                    break;
+                }
+            }
+            // check if sorting required
+            var changed = false;
+            if (idx >= 0) {
+                if (up == true && idx > 0) {
+                    var tmp = subDataSource[idx-1];
+                    subDataSource[idx-1] = found;
+                    subDataSource[idx] = tmp;
+                    changed = true;
+                }
+                else if (up == false && idx != subDataSource.length -1) {
+                    var tmp = subDataSource[idx+1];
+                    subDataSource[idx+1] = found;
+                    subDataSource[idx] = tmp;
+                    changed = true;
+                }
+            }
+            if (changed == true) {
+                // reassign ordering
+                for(var i=0; i<subDataSource.length; i++) {
+                    // reassign ordering
+                    subDataSource[i][sortFor] = (i+1).toString();
+                }
+                reloadDataTable(fieldName);
+            }
+        }
 
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
