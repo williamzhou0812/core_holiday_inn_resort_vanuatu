@@ -36,7 +36,7 @@
                         <button type="button" class="btn btn-xs btn-primary btn-pos" data-pos="down" data-id="{{ $rowInfo->id }}"><i class="voyager-angle-down"></i></button>
                     </td>
                 @elseif ($columnInfo->input_type == 'Text')
-                    <td><input style="width: 100%" type="text" id="text-{{ $rowInfo->id }}" data-id="{{ $rowInfo->id }}" value="{{ $displayValue }}"/></td>
+                    <td><span style="display: none">{{ $displayValue }}</span><input style="width: 100%" type="text" id="text-{{ $rowInfo->id }}" data-id="{{ $rowInfo->id }}" value="{{ $displayValue }}"/></td>
                 @else
                     <td>{{ $displayValue }}</td>
                 @endif
