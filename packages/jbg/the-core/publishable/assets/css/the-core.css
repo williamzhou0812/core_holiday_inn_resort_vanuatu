@@ -115,3 +115,17 @@ a.permission-deselect-all {
     padding-top: 0px;
     padding-bottom: 10px !important;
 }
+.subsection_dtable_panel table thead tr th {
+    font-weight: normal;
+}
+.subsection_dtable_panel .btn-pos {
+    padding: 1.5px 4px 1.5px 4px;
+}
+.subsection_dtable_panel th.sorting,
+.subsection_dtable_panel th.sorting_asc,
+.subsection_dtable_panel th.sorting_desc {
+    border-bottom-color: lightgray;
+}
+.subsection_dtable_panel .col-sm-12  {
+    width: auto;
+}
