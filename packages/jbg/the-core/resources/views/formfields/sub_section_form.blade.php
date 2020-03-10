@@ -28,6 +28,11 @@
     ];
 
 </script>
+<input @if($row->required == 1) required @endif type="hidden" class="form-control" name="{{ $row->field }}"
+        id="subsection_text_{{ $row->field }}"
+        placeholder="{{ old($row->field, $options->placeholder ?? $row->getTranslatedAttribute('display_name')) }}"
+       {!! isBreadSlugAutoGenerator($options) !!}
+       value="{{ old($row->field, $dataTypeContent->{$row->field} ?? $options->default ?? '') }}">
 <div class="subsection_dtable_panel">
 <table id="subsection_dtable_{{ $row->field }}" class="display">
 </table>

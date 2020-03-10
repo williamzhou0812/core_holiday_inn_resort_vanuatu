@@ -221,6 +221,19 @@
             }
         }
 
+        function updateDataTableText() {
+            var count = 0;
+            for (var field in subDataSources) {
+                var dataSource = subDataSources[field];
+                var dataSourceJson = JSON.stringify(dataSource);
+                $('#subsection_text_' + field).val(dataSourceJson);
+                count++;
+            }
+            // default to blank if no data
+            if (count == 0)
+                $('#subsection_text_' + field).val('');
+        }
+
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
 
@@ -252,6 +265,12 @@
             $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
             $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
 
+            $('.form-edit-add').on('submit', function() {
+                // update input
+                updateDataTableText();
+                return true;
+            });
+
             $('#confirm_delete').on('click', function(){
                 $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
                     if ( response
@@ -272,14 +291,14 @@
 
             @foreach($dataTypeRows as $row)
                 @if ($row->type === "sub_section_form")
-                    var subDataTable = $('#subsection_dtable_{{ $row->field }}').DataTable({
+                    var subDataTable{{ $row->field }} = $('#subsection_dtable_{{ $row->field }}').DataTable({
                         data: subDataSources['{{ $row->field }}'],
                         columns: subDataColumns['{{ $row->field }}'],
                         paging: false,
                         searching: false,
                         "info": false
                     });
-                    subDataTables['{{ $row->field }}'] = subDataTable;
+                    subDataTables['{{ $row->field }}'] = subDataTable{{ $row->field }};
                 @endif
             @endforeach
         });
