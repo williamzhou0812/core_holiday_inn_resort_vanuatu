@@ -172,6 +172,9 @@
                                             <a href="#tbc" title="{{ $subSectionContent->title }}" alt="{{ $subSectionContent->title }}">{{ $subSectionContent->title }}</a>
                                         </li>
                                         @endforeach
+                                        @if (sizeof($subSectionDataTypeContent) == 0)
+                                        <li> {{ __('voyager::datatable.sEmptyTable') }}</li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>

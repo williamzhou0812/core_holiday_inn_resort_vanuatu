@@ -62,8 +62,11 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
-        // get records from table for display_status == 1
-        $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
+        $subSectionDataTypeContent = array();
+        if (isset($tableReference)) {
+            // get records from table for display_status == 1
+            $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
+        }
 
         $view = 'voyager::bread.read';
 
@@ -113,7 +116,10 @@ class VoyagerSectionController extends VoyagerBaseController
         // get table references
         $tableReference = $dataTypeContent->table_reference;
         // get records from table for display_status == 1
-        $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
+        $subSectionDataTypeContent = array();
+        if (isset($tableReference)) {
+            $subSectionDataTypeContent = DB::table($tableReference)->select('id', 'title', 'position')->where('display_status', '1')->orderBy('position', 'asc')->get();
+        }
 
         $view = 'voyager::bread.edit-add';
 
