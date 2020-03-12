@@ -20,11 +20,6 @@
 @stop
 
 @section('content')
-    <script>
-        var subDataTables = [];
-        var subDataSources = [];
-        var subDataColumns =[];
-    </script>
     <div class="page-content edit-add container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -166,74 +161,6 @@
           };
         }
 
-        function reloadDataTable(fieldName) {
-            var subDataTable = subDataTables[fieldName];
-            var subDataSource = subDataSources[fieldName];
-            subDataTable.clear();
-            subDataTable.rows.add(subDataSource);
-            subDataTable.draw();
-        }
-        function editDataTableUpDown(fieldName, id, up, sortFor) {
-            // get data source
-            var subDataSource = subDataSources[fieldName];
-            if (subDataSource.length < 2)
-                return; // nothing to change
-            // sort asc
-            subDataSource.sort(function(a, b) {
-                var compA = parseInt(a[sortFor]);
-                var compB = parseInt(b[sortFor]);
-                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
-            });
-            // find the index of current id
-            var idx = -1;
-            var found = null;
-            for(var i=0; i<subDataSource.length; i++) {
-                // set index if found
-                if (subDataSource[i]['id'] == id) {
-                    idx = i;
-                    found = subDataSource[i];
-                    break;
-                }
-            }
-            // check if sorting required
-            var changed = false;
-            if (idx >= 0) {
-                if (up == true && idx > 0) {
-                    var tmp = subDataSource[idx-1];
-                    subDataSource[idx-1] = found;
-                    subDataSource[idx] = tmp;
-                    changed = true;
-                }
-                else if (up == false && idx != subDataSource.length -1) {
-                    var tmp = subDataSource[idx+1];
-                    subDataSource[idx+1] = found;
-                    subDataSource[idx] = tmp;
-                    changed = true;
-                }
-            }
-            if (changed == true) {
-                // reassign ordering
-                for(var i=0; i<subDataSource.length; i++) {
-                    // reassign ordering
-                    subDataSource[i][sortFor] = (i+1).toString();
-                }
-                reloadDataTable(fieldName);
-            }
-        }
-
-        function updateDataTableText() {
-            var count = 0;
-            for (var field in subDataSources) {
-                var dataSource = subDataSources[field];
-                var dataSourceJson = JSON.stringify(dataSource);
-                $('#subsection_text_' + field).val(dataSourceJson);
-                count++;
-            }
-            // default to blank if no data
-            if (count == 0)
-                $('#subsection_text_' + field).val('');
-        }
-
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
 
@@ -265,12 +192,6 @@
             $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
             $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
 
-            $('.form-edit-add').on('submit', function() {
-                // update input
-                updateDataTableText();
-                return true;
-            });
-
             $('#confirm_delete').on('click', function(){
                 $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
                     if ( response
@@ -289,18 +210,6 @@
             });
             $('[data-toggle="tooltip"]').tooltip();
 
-            @foreach($dataTypeRows as $row)
-                @if ($row->type === "sub_section_form")
-                    var subDataTable{{ $row->field }} = $('#subsection_dtable_{{ $row->field }}').DataTable({
-                        data: subDataSources['{{ $row->field }}'],
-                        columns: subDataColumns['{{ $row->field }}'],
-                        paging: false,
-                        searching: false,
-                        "info": false
-                    });
-                    subDataTables['{{ $row->field }}'] = subDataTable{{ $row->field }};
-                @endif
-            @endforeach
         });
     </script>
 @stop
