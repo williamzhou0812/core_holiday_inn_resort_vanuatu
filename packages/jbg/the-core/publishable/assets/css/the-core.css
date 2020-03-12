@@ -115,3 +115,37 @@ a.permission-deselect-all {
     padding-top: 0px;
     padding-bottom: 10px !important;
 }
+.subsection_dtable_panel table thead tr th {
+    font-weight: normal;
+}
+.subsection_dtable_panel .btn-pos {
+    padding: 1.5px 4px 1.5px 4px;
+}
+.subsection_dtable_panel th.sorting,
+.subsection_dtable_panel th.sorting_asc,
+.subsection_dtable_panel th.sorting_desc {
+    border-bottom-color: lightgray;
+}
+.subsection_dtable_panel .col-sm-12  {
+    width: auto;
+}
+.section-table h4 {
+    font-size: 14px;
+    color: #76838f;
+}
+.section-table-content {
+    background-color: #F7F7F7;
+    padding-bottom: 10px;
+}
+.section-table .section-table-content ul {
+    list-style-type:none;
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+.section-table .section-table-content ul li {
+    padding-top: 10px;
+}
+.section-table .section-table-content ul li a {
+    color: #22A7F0;
+    font-weight: 400;
+}
