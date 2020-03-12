@@ -109,59 +109,11 @@ class VoyagerSectionController extends VoyagerBaseController
         // Check if BREAD is Translatable
         $isModelTranslatable = is_bread_translatable($dataTypeContent);
 
-
-
-        /*
-        // get field options
-        $fieldOptions = SchemaManager::describeTable((strlen($dataType->model_name) != 0)
-                ? DB::getTablePrefix().app($dataType->model_name)->getTable()
-                : DB::getTablePrefix().$dataType->name
-        );
-
-
-
-        // get the details in subsection edit
-        $subSectionName = 'sub_sections';
-        $editRows = $dataType->editRows;
-        $subSectionEdit = null;
-        foreach($editRows as $editRow) {
-            if ($editRow->field == $subSectionName) {
-                $subSectionEdit = $editRow;
-                break;
-            }
-        }
-        if (!isset($subSectionEdit))
-            throw new Exception($subSectionName . " is not defined in table.");
-        // get the details settings
-        $subSectionDetails = $subSectionEdit->details;
-
-        var_dump($subSectionEdit->details);
-        // Get subsections from other models
-*/
-        /*
-        foreach (Voyager::model('DataType')::all() as $subSectionDataType) {
-            // skip current model
-            if ($subSectionDataType->slug == $dataType->slug)
-                continue;
-            // get fields
-            $subSectionfieldOptions = SchemaManager::describeTable((strlen($subSectionDataType->model_name) != 0)
-                    ? DB::getTablePrefix().app($subSectionDataType->model_name)->getTable()
-                    : DB::getTablePrefix().$subSectionDataType->name
-            );
-            // check if section_type field exists
-            $sectionTypeField = $subSectionfieldOptions->get('section_type');
-            if (!isset($sectionTypeField))
-                continue;
-            // get records that match current section type
-            $currentType = $dataTypeContent->type;
-            $subSectionDataTypeContent = DB::table($subSectionDataType->name)->where('section_type', $currentType)->get();
-            var_dump($subSectionDataTypeContent);
-            var_dump($subSectionDataTypeContent);
-            var_dump($subSectionDataTypeContent);
-            var_dump($subSectionDataTypeContent);
-            var_dump($currentType);
-        }
-        */
+        // SUB SECTION LOGIC
+        // get table references
+        $tableReference = $dataTypeContent->table_reference;
+        // get records from table for display_status == 1
+        $subSectionDataTypeContent = DB::table($tableReference)->where('display_status', '1')->orderBy('position','asc')->get();
 
         $view = 'voyager::bread.edit-add';
 
@@ -169,6 +121,6 @@ class VoyagerSectionController extends VoyagerBaseController
             $view = "voyager::$slug.edit-add";
         }
 
-        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'subSectionDataTypeContent'));
     }
 }
