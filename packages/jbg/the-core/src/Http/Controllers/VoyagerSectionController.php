@@ -63,7 +63,7 @@ class VoyagerSectionController extends VoyagerBaseController
         // get table references
         $tableReference = $dataTypeContent->table_reference;
         // get records from table for display_status == 1
-        $subSectionDataTypeContent = DB::table($tableReference)->where('display_status', '1')->orderBy('position','asc')->get();
+        $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
 
         $view = 'voyager::bread.read';
 
@@ -113,7 +113,7 @@ class VoyagerSectionController extends VoyagerBaseController
         // get table references
         $tableReference = $dataTypeContent->table_reference;
         // get records from table for display_status == 1
-        $subSectionDataTypeContent = DB::table($tableReference)->where('display_status', '1')->orderBy('position','asc')->get();
+        $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
 
         $view = 'voyager::bread.edit-add';
 
@@ -122,5 +122,106 @@ class VoyagerSectionController extends VoyagerBaseController
         }
 
         return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'subSectionDataTypeContent'));
+    }
+
+    // POST BR(E)AD
+    public function update(Request $request, $id)
+    {
+        $slug = $this->getSlug($request);
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        // Compatibility with Model binding.
+        $id = $id instanceof \Illuminate\Database\Eloquent\Model ? $id->{$id->getKeyName()} : $id;
+
+        $model = app($dataType->model_name);
+        if ($dataType->scope && $dataType->scope != '' && method_exists($model, 'scope'.ucfirst($dataType->scope))) {
+            $model = $model->{$dataType->scope}();
+        }
+        if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+            $data = $model->withTrashed()->findOrFail($id);
+        } else {
+            $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
+        }
+
+        // Check permission
+        $this->authorize('edit', $data);
+
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->editRows, $dataType->name, $id)->validate();
+        $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
+
+
+        // Reorder position for section table data
+        $tableReference = $data->table_reference;
+        $ordering = $request->section_table;
+        $this->reorderSectionTableData($tableReference, $ordering);
+
+        event(new BreadDataUpdated($dataType, $data));
+
+        if (auth()->user()->can('browse', $model)) {
+            $redirect = redirect()->route("voyager.{$dataType->slug}.index");
+        } else {
+            $redirect = redirect()->back();
+        }
+
+        return $redirect->with([
+            'message'    => __('voyager::generic.successfully_updated')." {$dataType->getTranslatedAttribute('display_name_singular')}",
+            'alert-type' => 'success',
+        ]);
+    }
+
+
+    protected function reorderSectionTableData($tableReference, $ordering) {
+        // get data type by table name
+        $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        if (!isset($dataType))
+            return;
+        // convert ordering to object
+        $newOrder = json_decode($ordering);
+        if (!isset($newOrder) || !is_array($newOrder) || sizeof($newOrder) <= 1)
+            return; // nothing to reorder
+
+        // get records from table
+        $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->orderBy('position','asc')->get();
+        $dividedBy = pow(10, strlen(strval(sizeof($newOrder))));
+        $lastItem = null;
+        foreach($newOrder as $item) {
+            // find object from original list
+            $found = find_in_collection('id', $item->id, $subSectionDataTypeContent);
+            if (!isset($found))
+            {
+                continue; // not found in original list
+            }
+            // set last post if first time
+            if (isset($lastItem)) {
+                // check this pos with last pos
+                if (floatval($found['item']->position) < floatval($lastItem['item']->position)) {
+                    // set position value to be last item + this pos as decimal
+                    $increaseBy = floatval($found['item']->position) / $dividedBy;
+                    $found['item']->position = floatval($lastItem['item']->position) + $increaseBy;
+                }
+            }
+            // set last pos
+            $lastItem = $found;
+        }
+        // sort by position
+        $sorted = $subSectionDataTypeContent->sortBy('position');
+        // reset position
+        // Begin Transaction
+        DB::beginTransaction();
+        try {
+            $pos = 0;
+            foreach ($sorted as $item) {
+                // set position
+                $item->position = ++$pos;
+                // perform update
+                DB::table($tableReference)->where('id', $item->id)->update(['position' => $item->position]);
+            }
+            // Commit Transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback Transaction
+            DB::rollback();
+        }
     }
 }
