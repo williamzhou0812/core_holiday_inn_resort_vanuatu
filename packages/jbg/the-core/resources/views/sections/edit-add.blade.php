@@ -93,6 +93,10 @@
                             @php
                             $sectionTableDataSource = [];
                             $posCount = 0;
+                            if (!isset($subSectionDataTypeContent)) {
+                                // set default if not defined
+                                $subSectionDataTypeContent = array();
+                            }
                             foreach($subSectionDataTypeContent as $subSectionContent) {
                                 $subSection = array(
                                     'id' => $subSectionContent->id,
