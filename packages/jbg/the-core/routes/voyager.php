@@ -39,12 +39,16 @@ Route::group(['as' => 'voyager.'], function () {
         // Role Routes
         Route::resource('roles', $namespacePrefix.'VoyagerRoleController');
 
-
         try {
             foreach (Voyager::model('DataType')::all() as $dataType) {
                 $breadController = $dataType->controller
                                  ? Str::start($dataType->controller, '\\')
                                  : $namespacePrefix.'VoyagerBaseController';
+
+                // Special controllers
+                if ($dataType->slug == 'sections') {
+                    $breadController = $namespacePrefix.'VoyagerSectionController';
+                }
 
                 Route::get($dataType->slug.'/order', $breadController.'@order')->name($dataType->slug.'.order');
                 Route::post($dataType->slug.'/action', $breadController.'@action')->name($dataType->slug.'.action');

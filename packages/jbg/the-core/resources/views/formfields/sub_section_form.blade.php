@@ -2,7 +2,6 @@
     $dataSourceJson = old($row->field, $dataTypeContent->{$row->field} ?? $options->default ?? '');
     if (empty($dataSourceJson))
         $dataSourceJson = '[]';
-
 @endphp
 <script>
     subDataSources['{{ $row->field }}'] =
