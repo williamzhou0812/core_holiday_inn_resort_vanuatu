@@ -129,3 +129,15 @@ a.permission-deselect-all {
 .subsection_dtable_panel .col-sm-12  {
     width: auto;
 }
+.section-table h4 {
+    font-size: 14px;
+    color: #76838f;
+}
+.section-table .section-table-content ul {
+    list-style-type:none;
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+.section-table .section-table-content ul li {
+    padding-top: 10px;
+}
