@@ -133,6 +133,10 @@ a.permission-deselect-all {
     font-size: 14px;
     color: #76838f;
 }
+.section-table-content {
+    background-color: #F7F7F7;
+    padding-bottom: 10px;
+}
 .section-table .section-table-content ul {
     list-style-type:none;
     margin: 0;
@@ -140,4 +144,8 @@ a.permission-deselect-all {
 }
 .section-table .section-table-content ul li {
     padding-top: 10px;
+}
+.section-table .section-table-content ul li a {
+    color: #22A7F0;
+    font-weight: 400;
 }
