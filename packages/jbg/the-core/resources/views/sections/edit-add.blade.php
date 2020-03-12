@@ -90,18 +90,27 @@
                                 </div>
                             @endforeach
                             <!-- Section Table -->
+                            @php
+                            $sectionTableDataSource = [];
+                            $posCount = 0;
+                            foreach($subSectionDataTypeContent as $subSectionContent) {
+                                $subSection = array(
+                                    'id' => $subSectionContent->id,
+                                    'title' => $subSectionContent->title,
+                                    'position' => ++$posCount
+                                );
+                                $sectionTableDataSource[] = $subSection;
+                            }
+                            $sectionTableDataSourceJson = json_encode($sectionTableDataSource);
+                            @endphp
                             <div class="form-group col-md-12">
                                 <label class="control-label">Section Table</label>
-                                <div class="section-table">
-                                    <div class="section-table-content">
-                                        <ul>
-                                            @foreach($subSectionDataTypeContent as $subSectionContent)
-                                            <li>
-                                                <a href="#tbc" title="{{ $subSectionContent->title }}" alt="{{ $subSectionContent->title }}">{{ $subSectionContent->title }}</a>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                                <input type="hidden" class="form-control" name="section_table"
+                                    id="section_table_input"
+                                    value="{{ $sectionTableDataSourceJson }}">
+                                <div class="subsection_dtable_panel">
+                                    <table id="subsection_dtable" class="display">
+                                    </table>
                                 </div>
                             </div>
                         </div><!-- panel-body -->
@@ -156,6 +165,8 @@
     <script>
         var params = {};
         var $file;
+        var sectionDataTable = null;
+        var sectionDataSource = [];
 
         function deleteHandler(tag, isMulti) {
           return function() {
@@ -173,6 +184,55 @@
             $('.confirm_delete_name').text(params.filename);
             $('#confirm_delete_modal').modal('show');
           };
+        }
+
+        function reloadDataTable() {
+            sectionDataTable.clear();
+            sectionDataTable.rows.add(sectionDataSource);
+            sectionDataTable.draw();
+        }
+
+        function editDataTableUpDown(id, up) {
+            // find the index of current id
+            var idx = -1;
+            var found = null;
+            for(var i=0; i<sectionDataSource.length; i++) {
+                // set index if found
+                if (sectionDataSource[i]['id'] == id) {
+                    idx = i;
+                    found = sectionDataSource[i];
+                    break;
+                }
+            }
+            // check if sorting required
+            var changed = false;
+            if (idx >= 0) {
+                if (up == true && idx > 0) {
+                    var tmp = sectionDataSource[idx-1];
+                    sectionDataSource[idx-1] = found;
+                    sectionDataSource[idx] = tmp;
+                    changed = true;
+                }
+                else if (up == false && idx != sectionDataSource.length -1) {
+                    var tmp = sectionDataSource[idx+1];
+                    sectionDataSource[idx+1] = found;
+                    sectionDataSource[idx] = tmp;
+                    changed = true;
+                }
+            }
+            if (changed == true) {
+                // reassign ordering
+                for(var i=0; i<sectionDataSource.length; i++) {
+                    // reassign ordering
+                    sectionDataSource[i]['position'] = (i+1).toString();
+                }
+                reloadDataTable();
+            }
+        }
+
+        function updateDataTableText() {
+            var dataSourceJson = JSON.stringify(sectionDataSource);
+            $('#section_table_input').val(dataSourceJson);
         }
 
         $('document').ready(function () {
@@ -223,6 +283,31 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+            // initialise section data table
+            sectionDataSource = JSON.parse($('#section_table_input').val());
+            sectionDataTable = $('#subsection_dtable').DataTable({
+                data: sectionDataSource,
+                columns: [
+                    { title: "", data: "position" , render: function (data, type, row) {
+                                                                         return '<button type="button" class="btn btn-xs btn-primary btn-pos" data-pos="up" onclick="javascript:editDataTableUpDown(\'' + row.id +'\',true)"><i class="voyager-angle-up"></i></button>' +
+                                                                          '&nbsp;<button type="button" class="btn btn-xs btn-primary btn-pos" data-pos="down" onclick="javascript:editDataTableUpDown(\'' + row.id + '\',false)"><i class="voyager-angle-down"></i></button>';
+                                                                     }},
+                    { title: "Position", data: "position"},
+                    { title: "Page Title", data: "title", render: function (data, type, row) {
+                                                                         return '<a href="#dummy" alt="' + row.title + '">' + row.title + '</a>';
+                                                                     }}
+                ],
+                paging: false,
+                searching: false,
+                "info": false
+            });
+
+            $('.form-edit-add').on('submit', function() {
+                // update input
+                updateDataTableText();
+                return true;
+            });
 
         });
     </script>
