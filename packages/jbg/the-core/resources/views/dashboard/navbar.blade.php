@@ -9,6 +9,7 @@
                 @php
                 $segments = array_filter(explode('/', str_replace(route('voyager.dashboard'), '', Request::url())));
                 $url = route('voyager.dashboard');
+                $queryString = $_SERVER['QUERY_STRING'];
                 @endphp
                 @if(count($segments) == 0)
                     <li class="active"><i class="voyager-dashboard"></i> {{ __('voyager::generic.dashboard') }}</li>
@@ -19,6 +20,9 @@
                     @foreach ($segments as $segment)
                         @php
                         $url .= '/'.$segment;
+                        if (isset($queryString) && !empty($queryString)) {
+                            $url .= '?' . $queryString;
+                        }
                         @endphp
                         @if ($loop->last)
                             <li>{{ ucfirst(urldecode($segment)) }}</li>
