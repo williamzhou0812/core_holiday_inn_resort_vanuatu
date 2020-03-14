@@ -169,7 +169,7 @@
                                     <ul>
                                         @foreach($subSectionDataTypeContent as $subSectionContent)
                                         <li>
-                                            <a href="#tbc" title="{{ $subSectionContent->title }}" alt="{{ $subSectionContent->title }}">{{ $subSectionContent->title }}</a>
+                                            <a href="{{ route('voyager.pages.index') }}/{{ $subSectionContent->id  }}?table={{ $dataTypeContent->table_reference }}" title="{{ $subSectionContent->title }}" alt="{{ $subSectionContent->title }}">{{ $subSectionContent->title }}</a>
                                         </li>
                                         @endforeach
                                         @if (sizeof($subSectionDataTypeContent) == 0)
