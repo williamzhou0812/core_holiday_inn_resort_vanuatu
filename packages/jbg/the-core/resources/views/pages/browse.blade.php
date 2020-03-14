@@ -5,7 +5,7 @@
 @section('page_header')
     <div class="container-fluid">
         <h1 class="page-title">
-            <i class="{{ $dataType->icon }}"></i> {{ $dataType->getTranslatedAttribute('display_name_plural') }}
+            <i class="voyager-file-text"></i> Pages
         </h1>
         @can('add', app($dataType->model_name))
             <a href="{{ route('voyager.pages.create') }}" class="btn btn-success btn-add-new">
