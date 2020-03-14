@@ -411,4 +411,123 @@ class VoyagerPageController extends VoyagerBaseController
             'alert-type' => 'success',
         ]);
     }
+
+
+    public function create(Request $request)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+
+        // Check permission
+        $this->authorize('add', app($dataType->model_name));
+
+        $dataTypeContent = (strlen($dataType->model_name) != 0)
+            ? new $dataType->model_name()
+            : false;
+
+        foreach ($dataType->addRows as $key => $row) {
+            $dataType->addRows[$key]['col_width'] = $row->details->width ?? 100;
+        }
+
+        // If a column has a relationship associated with it, we do not want to show that field
+        $this->removeRelationshipField($dataType, 'add');
+
+        // Check if BREAD is Translatable
+        $isModelTranslatable = is_bread_translatable($dataTypeContent);
+
+        $view = 'voyager::pages.edit-add';
+
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+    }
+
+    /**
+     * POST BRE(A)D - Store data.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+        // Check permission
+        $this->authorize('add', app($dataType->model_name));
+
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
+        $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
+
+        event(new BreadDataAdded($dataType, $data));
+
+        if (!$request->has('_tagging')) {
+            if (auth()->user()->can('browse', $data)) {
+                $redirect = redirect()->route("voyager.pages.index", array('table'=>$dataType->name));
+            } else {
+                $redirect = redirect()->back();
+            }
+
+            return $redirect->with([
+                'message'    => __('voyager::generic.successfully_added_new')." {$dataType->getTranslatedAttribute('display_name_singular')}",
+                'alert-type' => 'success',
+            ]);
+        } else {
+            return response()->json(['success' => true, 'data' => $data]);
+        }
+    }
+
 }

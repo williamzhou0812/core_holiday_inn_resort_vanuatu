@@ -28,7 +28,7 @@
                     <!-- form start -->
                     <form role="form"
                             class="form-edit-add"
-                            action="{{ $edit ? route('voyager.pages.update', $dataTypeContent->getKey()) : route('voyager.'.$dataType->slug.'.store') }}?table={{ $dataType->name }}"
+                            action="{{ $edit ? route('voyager.pages.update', $dataTypeContent->getKey()) : route('voyager.pages.store') }}?table={{ $dataType->name }}"
                             method="POST" enctype="multipart/form-data">
                         <!-- PUT Method if we are editing -->
                         @if($edit)
