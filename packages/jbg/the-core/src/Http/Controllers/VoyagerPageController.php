@@ -345,4 +345,70 @@ class VoyagerPageController extends VoyagerBaseController
         return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
     }
 
+    // POST BR(E)AD
+    public function update(Request $request, $id)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+
+        // Compatibility with Model binding.
+        $id = $id instanceof \Illuminate\Database\Eloquent\Model ? $id->{$id->getKeyName()} : $id;
+
+        $model = app($dataType->model_name);
+        if ($dataType->scope && $dataType->scope != '' && method_exists($model, 'scope'.ucfirst($dataType->scope))) {
+            $model = $model->{$dataType->scope}();
+        }
+        if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+            $data = $model->withTrashed()->findOrFail($id);
+        } else {
+            $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
+        }
+
+        // Check permission
+        $this->authorize('edit', $data);
+
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->editRows, $dataType->name, $id)->validate();
+        $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
+
+        event(new BreadDataUpdated($dataType, $data));
+
+        if (auth()->user()->can('browse', $model)) {
+            $redirect = redirect()->route("voyager.pages.index", array('table'=>$dataType->name));
+        } else {
+            $redirect = redirect()->back();
+        }
+
+        return $redirect->with([
+            'message'    => __('voyager::generic.successfully_updated')." {$dataType->getTranslatedAttribute('display_name_singular')}",
+            'alert-type' => 'success',
+        ]);
+    }
 }
