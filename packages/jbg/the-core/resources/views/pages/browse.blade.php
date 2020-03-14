@@ -78,6 +78,15 @@
                             </form>
                         @endif
                         <div class="table-responsive">
+                            <div class="pages-section-selection">
+                                <label>Section
+                                    <select id="page_section_selection" name="page_section_type">
+                                        @foreach($sectionDataTypeContent as $sectionData)
+                                        <option value="{{ $sectionData->table_reference }}"  @if($sectionData->table_reference == $dataType->name) selected="selected" @endif>{{ $sectionData->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            </div>
                             <table id="dataTable" class="table table-hover">
                                 <thead>
                                     <tr>
@@ -387,6 +396,13 @@
         $('td').on('click', '.delete', function (e) {
             $('#delete_form')[0].action = '{{ route('voyager.pages.destroy', '__id') }}'.replace('__id', $(this).data('id'));
             $('#delete_modal').modal('show');
+        });
+
+        $('#page_section_selection').on('change', function() {
+            var sectionName = $(this).val();
+            var winUrl = window.location.origin + window.location.pathname;
+            var redirectUrl = winUrl + '?table' + sectionName;
+            window.location.href = redirectUrl;
         });
 
         @if($showPositioning)

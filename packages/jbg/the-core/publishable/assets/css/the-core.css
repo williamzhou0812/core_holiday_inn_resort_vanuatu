@@ -149,3 +149,20 @@ a.permission-deselect-all {
     color: #22A7F0;
     font-weight: 400;
 }
+.pages-section-selection {
+    position: absolute;
+    left: 220px;
+    top: 28px;
+    z-index: 10;
+}
+.pages-section-selection label {
+    color: #333;
+    font-size: 14px;
+    font-weight: 400;
+}
+.pages-section-selection select {
+    width: auto !important;
+    padding: 4px 6px !important;
+    border: 1px solid #e4eaec;
+    border-radius: 3px;
+}
