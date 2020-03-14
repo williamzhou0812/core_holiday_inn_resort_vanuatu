@@ -299,7 +299,7 @@
                                                                      }},
                     { title: "Position", data: "position"},
                     { title: "Page Title", data: "title", render: function (data, type, row) {
-                                                                         return '<a href="#dummy" alt="' + row.title + '">' + row.title + '</a>';
+                                                                         return '<a href="{{ route('voyager.pages.index') }}/' + row.id + '?table={{ $dataTypeContent->table_reference }}" alt="' + row.title + '">' + row.title + '</a>';
                                                                      }}
                 ],
                 paging: false,
