@@ -193,7 +193,7 @@ class VoyagerSectionController extends VoyagerBaseController
         $lastItem = null;
         foreach($newOrder as $item) {
             // find object from original list
-            $found = find_in_collection('id', $item->id, $subSectionDataTypeContent);
+            $found = $subSectionDataTypeContent->firstWhere('id', $item->id);
             if (!isset($found))
             {
                 continue; // not found in original list
@@ -201,10 +201,10 @@ class VoyagerSectionController extends VoyagerBaseController
             // set last post if first time
             if (isset($lastItem)) {
                 // check this pos with last pos
-                if (floatval($found['item']->position) < floatval($lastItem['item']->position)) {
+                if (floatval($found->position) < floatval($lastItem->position)) {
                     // set position value to be last item + this pos as decimal
-                    $increaseBy = floatval($found['item']->position) / $dividedBy;
-                    $found['item']->position = floatval($lastItem['item']->position) + $increaseBy;
+                    $increaseBy = floatval($found->position) / $dividedBy;
+                    $found->position = floatval($lastItem->position) + $increaseBy;
                 }
             }
             // set last pos

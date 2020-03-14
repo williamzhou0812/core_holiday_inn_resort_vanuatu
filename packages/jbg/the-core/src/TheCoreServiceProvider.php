@@ -37,7 +37,6 @@ class TheCoreServiceProvider extends VoyagerServiceProvider
 {
     public function register() {
         parent::register();
-        Voyager::addFormField(SubSectionHandler::class);
         Voyager::addFormField(VisibleHandler::class);
     }
 }

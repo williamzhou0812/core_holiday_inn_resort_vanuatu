@@ -5,7 +5,13 @@
         $action = new $class($dataType, $data);
     @endphp
     @can ($action->getPolicy(), $data)
-        <a href="{{ $action->getRoute($dataType->name) }}" title="{{ $action->getTitle() }}" {!! $action->convertAttributesToHtml() !!}>
+        @php
+            $href = $action->getRoute($dataType->name);
+            if (isset($customSlug) && !empty($customSlug)) {
+                $href = str_replace($dataType->slug, $customSlug, $href) . '?table='.$dataType->name;
+            }
+        @endphp
+        <a href="{{ $href }}" title="{{ $action->getTitle() }}" {!! $action->convertAttributesToHtml() !!}>
             <i class="{{ $action->getIcon() }}"></i> <span class="hidden-xs hidden-sm">{{ $action->getTitle() }}</span>
         </a>
     @endcan

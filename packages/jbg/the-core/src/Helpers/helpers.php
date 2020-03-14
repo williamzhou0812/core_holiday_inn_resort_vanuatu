@@ -32,18 +32,3 @@ if (!function_exists('get_file_name')) {
         }
     }
 }
-
-if (!function_exists('find_in_collection')) {
-    function find_in_collection($column, $value, $collection)
-    {
-        for($i=0; $i<sizeof($collection); $i++) {
-            if ($collection[$i]->$column == $value) {
-                return array(
-                    'index' => $i,
-                    'item' => $collection[$i]
-                );
-            }
-        }
-        return null; // not found
-    }
-}

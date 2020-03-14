@@ -9,6 +9,7 @@
                 @php
                 $segments = array_filter(explode('/', str_replace(route('voyager.dashboard'), '', Request::url())));
                 $url = route('voyager.dashboard');
+                $queryString = $_SERVER['QUERY_STRING'];
                 @endphp
                 @if(count($segments) == 0)
                     <li class="active"><i class="voyager-dashboard"></i> {{ __('voyager::generic.dashboard') }}</li>
@@ -23,8 +24,14 @@
                         @if ($loop->last)
                             <li>{{ ucfirst(urldecode($segment)) }}</li>
                         @else
+                            @php
+                            $urlPostfix = '';
+                            if (isset($queryString) && !empty($queryString)) {
+                                $urlPostfix = '?' . $queryString;
+                            }
+                            @endphp
                             <li>
-                                <a href="{{ $url }}">{{ ucfirst(urldecode($segment)) }}</a>
+                                <a href="{{ $url }}{{ $urlPostfix }}">{{ ucfirst(urldecode($segment)) }}</a>
                             </li>
                         @endif
                     @endforeach
