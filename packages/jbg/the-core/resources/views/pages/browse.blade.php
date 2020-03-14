@@ -401,7 +401,7 @@
         $('#page_section_selection').on('change', function() {
             var sectionName = $(this).val();
             var winUrl = window.location.origin + window.location.pathname;
-            var redirectUrl = winUrl + '?table' + sectionName;
+            var redirectUrl = winUrl + '?table=' + sectionName;
             window.location.href = redirectUrl;
         });
 
