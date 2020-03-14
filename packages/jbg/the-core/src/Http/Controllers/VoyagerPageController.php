@@ -602,4 +602,118 @@ class VoyagerPageController extends VoyagerBaseController
 
         return redirect()->route("voyager.pages.index", array('table'=>$dataType->name))->with($data);
     }
+
+    public function order(Request $request)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+
+        // Check permission
+        $this->authorize('edit', app($dataType->model_name));
+
+        if (!isset($dataType->order_column) || !isset($dataType->order_display_column)) {
+            return redirect()
+                ->route("voyager.{$dataType->slug}.index")
+                ->with([
+                    'message'    => __('voyager::bread.ordering_not_set'),
+                    'alert-type' => 'error',
+                ]);
+        }
+
+        $model = app($dataType->model_name);
+        if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+            $model = $model->withTrashed();
+        }
+        $results = $model->orderBy($dataType->order_column, $dataType->order_direction)->get();
+
+        $display_column = $dataType->order_display_column;
+
+        $dataRow = Voyager::model('DataRow')->whereDataTypeId($dataType->id)->whereField($display_column)->first();
+
+        $view = 'voyager::pages.order';
+
+        return Voyager::view($view, compact(
+            'dataType',
+            'display_column',
+            'dataRow',
+            'results'
+        ));
+    }
+
+    public function update_order(Request $request)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+
+        // Check permission
+        $this->authorize('edit', app($dataType->model_name));
+
+        $model = app($dataType->model_name);
+
+        $order = json_decode($request->input('order'));
+        $column = $dataType->order_column;
+        foreach ($order as $key => $item) {
+            if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+                $i = $model->withTrashed()->findOrFail($item->id);
+            } else {
+                $i = $model->findOrFail($item->id);
+            }
+            $i->$column = ($key + 1);
+            $i->save();
+        }
+    }
 }
