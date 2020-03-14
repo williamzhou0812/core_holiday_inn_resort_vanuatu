@@ -13,7 +13,7 @@
             </a>
         @endcan
         @can('delete', app($dataType->model_name))
-            @include('voyager::partials.bulk-delete')
+            @include('voyager::pages.bulk-delete')
         @endcan
         @can('edit', app($dataType->model_name))
             @if(isset($dataType->order_column) && isset($dataType->order_display_column))
@@ -394,7 +394,7 @@
 
         var deleteFormAction;
         $('td').on('click', '.delete', function (e) {
-            $('#delete_form')[0].action = '{{ route('voyager.pages.destroy', '__id') }}'.replace('__id', $(this).data('id'));
+            $('#delete_form')[0].action = '{{ route('voyager.pages.destroy', '__id') }}'.replace('__id', $(this).data('id')) + "?table={{ $dataType->name }}";
             $('#delete_modal').modal('show');
         });
 

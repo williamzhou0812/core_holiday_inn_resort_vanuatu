@@ -530,4 +530,76 @@ class VoyagerPageController extends VoyagerBaseController
         }
     }
 
+    public function destroy(Request $request, $id)
+    {
+        // set default $tableReference as first item table reference value
+        $tableReference = '';
+        // check if parameter request exists
+        $tableRequest = $request->query('table');
+        if (isset($tableRequest) && !empty($tableRequest)) {
+            $tableReference = $tableRequest;
+        }
+
+        // retrieve data type
+        $dataType = null;
+        if (isset($tableReference)) {
+            // GET THE DataType based on the name
+            $dataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        }
+        else {
+            // GET THE SLUG, ex. 'posts', 'pages', etc.
+            $slug = $this->getSlug($request);
+
+            // GET THE DataType based on the slug
+            $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        }
+
+        // check if data type exists
+        if (!isset($dataType)) {
+            abort(404); // request table not found, show 404 page
+        }
+
+        // ensure slug is provided
+        $slug = $dataType->slug;
+
+        // Check permission
+        $this->authorize('delete', app($dataType->model_name));
+
+        // Init array of IDs
+        $ids = [];
+        if (empty($id)) {
+            // Bulk delete, get IDs from POST
+            $ids = explode(',', $request->ids);
+        } else {
+            // Single item delete, get ID from URL
+            $ids[] = $id;
+        }
+        foreach ($ids as $id) {
+            $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
+
+            $model = app($dataType->model_name);
+            if (!($model && in_array(SoftDeletes::class, class_uses_recursive($model)))) {
+                $this->cleanup($dataType, $data);
+            }
+        }
+
+        $displayName = count($ids) > 1 ? $dataType->getTranslatedAttribute('display_name_plural') : $dataType->getTranslatedAttribute('display_name_singular');
+
+        $res = $data->destroy($ids);
+        $data = $res
+            ? [
+                'message'    => __('voyager::generic.successfully_deleted')." {$displayName}",
+                'alert-type' => 'success',
+            ]
+            : [
+                'message'    => __('voyager::generic.error_deleting')." {$displayName}",
+                'alert-type' => 'error',
+            ];
+
+        if ($res) {
+            event(new BreadDataDeleted($dataType, $data));
+        }
+
+        return redirect()->route("voyager.pages.index", array('table'=>$dataType->name))->with($data);
+    }
 }
