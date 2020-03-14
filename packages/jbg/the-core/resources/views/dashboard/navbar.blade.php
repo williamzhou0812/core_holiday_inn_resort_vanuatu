@@ -20,15 +20,18 @@
                     @foreach ($segments as $segment)
                         @php
                         $url .= '/'.$segment;
-                        if (isset($queryString) && !empty($queryString)) {
-                            $url .= '?' . $queryString;
-                        }
                         @endphp
                         @if ($loop->last)
                             <li>{{ ucfirst(urldecode($segment)) }}</li>
                         @else
+                            @php
+                            $urlPostfix = '';
+                            if (isset($queryString) && !empty($queryString)) {
+                                $urlPostfix = '?' . $queryString;
+                            }
+                            @endphp
                             <li>
-                                <a href="{{ $url }}">{{ ucfirst(urldecode($segment)) }}</a>
+                                <a href="{{ $url }}{{ $urlPostfix }}">{{ ucfirst(urldecode($segment)) }}</a>
                             </li>
                         @endif
                     @endforeach
