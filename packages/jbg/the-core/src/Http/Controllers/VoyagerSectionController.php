@@ -62,10 +62,24 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
+
+        // get model for table reference
+        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                : DB::getTablePrefix().$referenceDataType->name
+        );
+        // generate where statement
+        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
         $subSectionDataTypeContent = array();
         if (isset($tableReference)) {
             // get records from table for display_status == 1
-            $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
+            $tmpTable = DB::table($tableReference)->select('id','title','position');
+            if ($referenceDisplayStatusExists)
+            {
+                $tmpTable->where('display_status', '1');
+            }
+            $subSectionDataTypeContent =  $tmpTable->orderBy('position','asc')->get();
         }
 
         $view = 'voyager::bread.read';
@@ -115,10 +129,24 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
-        // get records from table for display_status == 1
+        // get model for table reference
+        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                : DB::getTablePrefix().$referenceDataType->name
+        );
+        // generate where statement
+        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+
         $subSectionDataTypeContent = array();
         if (isset($tableReference)) {
-            $subSectionDataTypeContent = DB::table($tableReference)->select('id', 'title', 'position')->where('display_status', '1')->orderBy('position', 'asc')->get();
+            // get records from table for display_status == 1
+            $tmpTable = DB::table($tableReference)->select('id','title','position');
+            if ($referenceDisplayStatusExists)
+            {
+                $tmpTable->where('display_status', '1');
+            }
+            $subSectionDataTypeContent =  $tmpTable->orderBy('position','asc')->get();
         }
 
         $view = 'voyager::bread.edit-add';
