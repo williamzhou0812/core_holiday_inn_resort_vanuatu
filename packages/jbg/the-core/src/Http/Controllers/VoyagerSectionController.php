@@ -62,10 +62,34 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
+
+        // get model for table reference
+        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                : DB::getTablePrefix().$referenceDataType->name
+        );
+        // generate where statement
+        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+        $selectFields = array('id','title','position');
+
         $subSectionDataTypeContent = array();
         if (isset($tableReference)) {
             // get records from table for display_status == 1
-            $subSectionDataTypeContent = DB::table($tableReference)->select('id','title','position')->where('display_status', '1')->orderBy('position','asc')->get();
+            if ($referenceDisplayFromExists) {
+                $selectFields[] = 'display_from';
+            }
+            if ($referenceDisplayToExists) {
+                $selectFields[] = 'display_to';
+            }
+            $tmpTable = DB::table($tableReference)->select($selectFields);
+            if ($referenceDisplayStatusExists)
+            {
+                $tmpTable->where('display_status', '1');
+            }
+            $subSectionDataTypeContent =  $tmpTable->orderBy('position','asc')->get();
         }
 
         $view = 'voyager::bread.read';
@@ -74,7 +98,7 @@ class VoyagerSectionController extends VoyagerBaseController
             $view = "voyager::$slug.read";
         }
 
-        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'isSoftDeleted', 'subSectionDataTypeContent'));
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'isSoftDeleted', 'subSectionDataTypeContent','selectFields'));
     }
 
     public function edit(Request $request, $id)
@@ -115,10 +139,33 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
-        // get records from table for display_status == 1
+        // get model for table reference
+        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                : DB::getTablePrefix().$referenceDataType->name
+        );
+        // generate where statement
+        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+        $selectFields = array('id','title','position');
+
         $subSectionDataTypeContent = array();
         if (isset($tableReference)) {
-            $subSectionDataTypeContent = DB::table($tableReference)->select('id', 'title', 'position')->where('display_status', '1')->orderBy('position', 'asc')->get();
+            // get records from table for display_status == 1
+            if ($referenceDisplayFromExists) {
+                $selectFields[] = 'display_from';
+            }
+            if ($referenceDisplayToExists) {
+                $selectFields[] = 'display_to';
+            }
+            $tmpTable = DB::table($tableReference)->select($selectFields);
+            if ($referenceDisplayStatusExists)
+            {
+                $tmpTable->where('display_status', '1');
+            }
+            $subSectionDataTypeContent =  $tmpTable->orderBy('position','asc')->get();
         }
 
         $view = 'voyager::bread.edit-add';
@@ -127,7 +174,7 @@ class VoyagerSectionController extends VoyagerBaseController
             $view = "voyager::$slug.edit-add";
         }
 
-        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'subSectionDataTypeContent'));
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'subSectionDataTypeContent','selectFields'));
     }
 
     // POST BR(E)AD
