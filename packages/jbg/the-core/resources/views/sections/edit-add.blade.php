@@ -103,10 +103,10 @@
                                     'title' => $subSectionContent->title,
                                     'position' => ++$posCount
                                 );
-                                if (array_search('display_from',$selectFields) !== false) {
+                                if (isset($selectFields) && array_search('display_from',$selectFields) !== false) {
                                     $subSection['display_from'] = $subSectionContent->display_from;
                                 }
-                                if (array_search('display_to',$selectFields) !== false) {
+                                if (isset($selectFields) && array_search('display_to',$selectFields) !== false) {
                                     $subSection['display_to'] = $subSectionContent->display_to;
                                 }
                                 $sectionTableDataSource[] = $subSection;
@@ -307,10 +307,10 @@
                     { title: "Page Title", data: "title", render: function (data, type, row) {
                                                                          return '<a href="{{ route('voyager.pages.index') }}/' + row.id + '?table={{ $dataTypeContent->table_reference }}" alt="' + row.title + '">' + row.title + '</a>';
                                                                      }},
-                    @if (array_search('display_from',$selectFields) !== false)
+                    @if (isset($selectFields) && array_search('display_from',$selectFields) !== false)
                     { title: "Display From", data: "display_from"},
                     @endif
-                    @if (array_search('display_to',$selectFields) !== false)
+                    @if (isset($selectFields) && array_search('display_to',$selectFields) !== false)
                     { title: "Display To", data: "display_to"},
                     @endif
                 ],
