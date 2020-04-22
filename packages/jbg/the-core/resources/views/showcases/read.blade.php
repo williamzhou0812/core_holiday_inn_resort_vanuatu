@@ -43,9 +43,9 @@
     <div class="page-content read container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="panel panel-bordered" style="padding-bottom:5px;">
+                <div class="panel panel-bordered showcase-panel" style="padding-bottom:5px;">
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                         @php
                         $row = $readRowsDict['name'];
                         @endphp
@@ -61,18 +61,88 @@
                         @php
                         $row = $readRowsDict['type'];
                         @endphp
-                        <div class="panel-heading" style="border-bottom:0;">
-                            <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
                             </div>
                             <div class="panel-body" style="padding-top:0;">
                                 @include('voyager::multilingual.input-hidden-bread-read')
                                 <p>{{ $dataTypeContent->{$row->field} }}</p>
                             </div>
                         </div>
-                        <div class="col-md-2">
-                        aaa
+                        <div class="col-md-3">
+                        @php
+                        $row = $readRowsDict['display_status'];
+                        @endphp
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                            @php
+                                $visible_checked = false;
+                                if (property_exists($row->details, 'on') && property_exists($row->details, 'off')) {
+                                    $visible_checked = ($dataTypeContent->{$row->field});
+                                }
+                                else {
+                                    $visible_checked = strval($dataTypeContent->{$row->field}) == '1';
+                                }
+                            @endphp
+                            @if($visible_checked)
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            @else
+                                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                            @endif
+                            </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                        @php
+                        $row = $readRowsDict['created_at'];
+                        @endphp
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                 @if ( property_exists($row->details, 'format') && !is_null($dataTypeContent->{$row->field}) )
+                                     {{ \Carbon\Carbon::parse($dataTypeContent->{$row->field})->formatLocalized($row->details->format) }}
+                                 @else
+                                     {{ $dataTypeContent->{$row->field} }}
+                                 @endif
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                        @php
+                        $row = $readRowsDict['display_from'];
+                        @endphp
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                 @if ( property_exists($row->details, 'format') && !is_null($dataTypeContent->{$row->field}) )
+                                     {{ \Carbon\Carbon::parse($dataTypeContent->{$row->field})->formatLocalized($row->details->format) }}
+                                 @else
+                                     {{ $dataTypeContent->{$row->field} }}
+                                 @endif
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        @php
+                        $row = $readRowsDict['display_to'];
+                        @endphp
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ $row->getTranslatedAttribute('display_name') }}</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                                 @if ( property_exists($row->details, 'format') && !is_null($dataTypeContent->{$row->field}) )
+                                     {{ \Carbon\Carbon::parse($dataTypeContent->{$row->field})->formatLocalized($row->details->format) }}
+                                 @else
+                                     {{ $dataTypeContent->{$row->field} }}
+                                 @endif
+                            </div>
+                        </div>
+                    </div>
+
+
                     <!-- form start -->
                     @foreach($dataType->readRows as $row)
                         @php
