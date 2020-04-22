@@ -141,7 +141,39 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        @php
+                        $row = $readRowsDict['file'];
+                        $fileType = 'Image'; // default to image
+                        $typeRow = $readRowsDict['type'];
+                        if (isset($typeRow)) {
+                            $fileType = $dataTypeContent->type;
+                        }
+                        var_dump($dataTypeContent->{$row->field});
+                        @endphp
+                        <div class="col-md-12">
+                            <div class="panel-heading" style="border-bottom:0;">
+                                <h3 class="panel-title">{{ __('voyager::generic.preview') }}</h3>
+                            </div>
+                            <div class="panel-body" style="padding-top:0;">
+                            @if ($fileType == 'Image')
+                                @php
+                                    $view_img_width = '';
+                                    if (property_exists($row->details, 'view_image_width')) {
+                                        $view_img_width = $row->details->view_image_width;
+                                    }
+                                @endphp
+                                <img class="img-responsive"
+                                    @if (!empty($view_img_width))
+                                     width="{{ $view_img_width }}"
+                                    @endif
+                                     src="{{ filter_var($dataTypeContent->{$row->field}, FILTER_VALIDATE_URL) ? $dataTypeContent->{$row->field} : Voyager::image($dataTypeContent->{$row->field}) }}">
+                            @elseif($fileType == 'Video')
+                                Video here
+                            @endif
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- form start -->
                     @foreach($dataType->readRows as $row)
