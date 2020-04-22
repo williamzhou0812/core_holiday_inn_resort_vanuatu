@@ -173,7 +173,15 @@
                                     <br/>
                                 @endforeach
                             @elseif($fileType == 'Video')
-                                Video here
+                                @foreach($fileList as $fileObj)
+                                    <video controls width="500">
+                                       <source src="{{ filter_var($fileObj->download_link, FILTER_VALIDATE_URL) ? $fileObj->download_link : Voyager::image($fileObj->download_link) }}"
+                                               type="video/mp4">
+
+                                       Sorry, your browser doesn't support embedded videos.
+                                    </video>
+                                    <br/>
+                                @endforeach
                             @endif
                             </div>
                         </div>
