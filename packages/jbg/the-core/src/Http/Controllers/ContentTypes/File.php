@@ -33,6 +33,7 @@ class File extends BaseType
             array_push($filesPath, [
                 'download_link' => $path.$filename.'.'.$file->getClientOriginalExtension(),
                 'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType()
             ]);
         }
 
