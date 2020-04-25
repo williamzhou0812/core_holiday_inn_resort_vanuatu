@@ -32,11 +32,15 @@ use TCG\Voyager\Providers\VoyagerEventServiceProvider;
 use TCG\Voyager\Translator\Collection as TranslatorCollection;
 use TCG\Voyager\FormFields\SubSectionHandler;
 use TCG\Voyager\FormFields\VisibleHandler;
+use TCG\Voyager\FormFields\DateTimeHandler;
+use TCG\Voyager\FormFields\MediaFilesHandler;
 
 class TheCoreServiceProvider extends VoyagerServiceProvider
 {
     public function register() {
         parent::register();
         Voyager::addFormField(VisibleHandler::class);
+        Voyager::addFormField(DateTimeHandler::class);
+        Voyager::addFormField(MediaFilesHandler::class);
     }
 }

@@ -166,3 +166,27 @@ a.permission-deselect-all {
     border: 1px solid #e4eaec;
     border-radius: 3px;
 }
+.date_time_panel .input-group input{
+    border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+}
+.date_time_panel .input-group .input-group-btn button{
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    background-color: white;
+    border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+}
+.media-files-panel a.voyager-x {
+    font-size: 20px;
+    color: #808080;
+}
+
+.media-files-panel a.voyager-x:hover,
+.media-files-panel a.voyager-x:active,
+.media-files-panel a.voyager-x:focus {
+    text-decoration: none;
+}

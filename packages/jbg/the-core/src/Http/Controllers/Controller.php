@@ -20,6 +20,8 @@ use TCG\Voyager\Http\Controllers\ContentTypes\Relationship;
 use TCG\Voyager\Http\Controllers\ContentTypes\SelectMultiple;
 use TCG\Voyager\Http\Controllers\ContentTypes\Text;
 use TCG\Voyager\Http\Controllers\ContentTypes\Timestamp;
+use TCG\Voyager\Http\Controllers\ContentTypes\DateTime;
+use TCG\Voyager\Http\Controllers\ContentTypes\MediaFiles;
 use TCG\Voyager\Traits\AlertsMessages;
 use Validator;
 
@@ -68,7 +70,7 @@ abstract class Controller extends BaseController
                 continue;
             }
 
-            $content = $this->getContentBasedOnType($request, $slug, $row, $row->details);
+            $content = $this->getContentBasedOnType($request, $slug, $row, $row->details, $data->{$row->field});
 
             if ($row->type == 'relationship' && $row->details->type != 'belongsToMany') {
                 $row->field = @$row->details->column;
@@ -100,6 +102,14 @@ abstract class Controller extends BaseController
 
                 // If the file upload is null and it has a current file keep the current file
                 if ($row->type == 'file') {
+                    $content = $data->{$row->field};
+                    if (!$content) {
+                        $content = json_encode([]);
+                    }
+                }
+
+                // If the file upload is null and it has a current file keep the current file
+                if ($row->type == 'media_files') {
                     $content = $data->{$row->field};
                     if (!$content) {
                         $content = json_encode([]);
@@ -228,7 +238,7 @@ abstract class Controller extends BaseController
         return Validator::make($data, $rules, $messages, $customAttributes);
     }
 
-    public function getContentBasedOnType(Request $request, $slug, $row, $options = null)
+    public function getContentBasedOnType(Request $request, $slug, $row, $options = null, $original_data = null)
     {
         switch ($row->type) {
             /********** PASSWORD TYPE **********/
@@ -264,6 +274,12 @@ abstract class Controller extends BaseController
             /********** RELATIONSHIPS TYPE **********/
             case 'relationship':
                 return (new Relationship($request, $slug, $row, $options))->handle();
+            /********** DATE TIME TYPE **********/
+            case 'datetime':
+                return (new DateTime($request, $slug, $row, $options))->handle();
+            /********** MEDIA FILES TYPE **********/
+            case 'media_files':
+                return (new MediaFiles($request, $slug, $row, $options, $original_data))->handle();
             /********** ALL OTHER TEXT TYPE **********/
             default:
                 return (new Text($request, $slug, $row, $options))->handle();
