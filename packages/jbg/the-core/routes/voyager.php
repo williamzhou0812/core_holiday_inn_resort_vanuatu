@@ -52,6 +52,9 @@ Route::group(['as' => 'voyager.'], function () {
                 else if ($dataType->slug == 'pages') {
                     $breadController = $namespacePrefix.'VoyagerPageController';
                 }
+                else if ($dataType->slug == 'showcases') {
+                    $breadController = $namespacePrefix.'VoyagerShowcaseController';
+                }
 
                 Route::get($dataType->slug.'/order', $breadController.'@order')->name($dataType->slug.'.order');
                 Route::post($dataType->slug.'/action', $breadController.'@action')->name($dataType->slug.'.action');
