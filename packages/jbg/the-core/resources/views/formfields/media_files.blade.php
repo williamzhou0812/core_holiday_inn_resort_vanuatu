@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-sm-1">
                     <a href="#" class="voyager-x remove-multi-media-file" title="Delete"></a>
-                    <input type="hidden" name="{{ $row->field }}_files[]" value="{{ $file->download_link }}">
+                    <input type="hidden" name="{{ $row->field }}_files[]" value="{{ $file->download_link }}" class="{{ $row->field }}_data">
                 </div>
               </div>
             </div>
