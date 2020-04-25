@@ -180,3 +180,13 @@ a.permission-deselect-all {
     border-left-style: none;
     border-right-style: none;
 }
+.media-files-panel a.voyager-x {
+    font-size: 20px;
+    color: #808080;
+}
+
+.media-files-panel a.voyager-x:hover,
+.media-files-panel a.voyager-x:active,
+.media-files-panel a.voyager-x:focus {
+    text-decoration: none;
+}

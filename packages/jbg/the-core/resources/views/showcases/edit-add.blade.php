@@ -209,6 +209,7 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
                     <button type="button" class="btn btn-danger" id="confirm_delete">{{ __('voyager::generic.delete_confirm') }}</button>
                 </div>
+                <input type="hidden" name="modal-data" class="confirm_delete_type" value=""/>
             </div>
         </div>
     </div>
@@ -234,8 +235,26 @@
             }
 
             $('.confirm_delete_name').text(params.filename);
+            $('.confirm_delete_type').text('default');
             $('#confirm_delete_modal').modal('show');
           };
+        }
+
+        function deleteMediaHandler(tag, isMulti) {
+            return function() {
+                $file = $(this).parent().parent().find('.fileType');
+                params = {
+                    slug:   '{{ $dataType->slug }}',
+                    filename:  $file.data('file-name'),
+                    id:     $file.data('id'),
+                    field:  $file.parent().data('field-name'),
+                    multi: isMulti,
+                    _token: '{{ csrf_token() }}'
+                }
+                $('.confirm_delete_name').text(params.filename);
+                $('.confirm_delete_type').text('mediafiles');
+                $('#confirm_delete_modal').modal('show');
+            };
         }
 
         $('document').ready(function () {
@@ -289,20 +308,26 @@
             $('.form-group').on('click', '.remove-single-image', deleteHandler('img', false));
             $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
             $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
+            $('.form-group').on('click', '.remove-multi-media-file', deleteMediaHandler('a', true));
 
             $('#confirm_delete').on('click', function(){
-                $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
-                    if ( response
-                        && response.data
-                        && response.data.status
-                        && response.data.status == 200 ) {
+                if ($('.confirm_delete_type').text() == "default") {
+                    $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
+                        if ( response
+                            && response.data
+                            && response.data.status
+                            && response.data.status == 200 ) {
 
-                        toastr.success(response.data.message);
-                        $file.parent().fadeOut(300, function() { $(this).remove(); })
-                    } else {
-                        toastr.error("Error removing file.");
-                    }
-                });
+                            toastr.success(response.data.message);
+                            $file.parent().fadeOut(300, function() { $(this).remove(); })
+                        } else {
+                            toastr.error("Error removing file.");
+                        }
+                    });
+                }
+                else if($('.confirm_delete_type').text() == "mediafiles") {
+                    $file.parent().parent().parent().fadeOut(300, function() { $(this).remove(); });
+                }
 
                 $('#confirm_delete_modal').modal('hide');
             });
