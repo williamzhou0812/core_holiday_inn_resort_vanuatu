@@ -263,11 +263,19 @@
                 format: 'DD/MM/YYYY',
                 defaultDate: $(elt).data('datepart')
               });
+              var btnId = $(elt).attr('name')+'_btn';
+              $('#'+btnId).click(function() {
+                $(elt).focus();
+              });
             });
             $('.form-control.timepart-picker').each(function(idx, elt) {
               $(elt).datetimepicker({
                 format: 'h:mm A',
                 defaultDate: $(elt).data('timepart')
+              });
+              var btnId = $(elt).attr('name')+'_btn';
+              $('#'+btnId).click(function() {
+                $(elt).focus();
               });
             });
 
