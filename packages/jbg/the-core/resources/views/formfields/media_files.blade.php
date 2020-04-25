@@ -4,7 +4,7 @@
     $decoded = json_decode($dataTypeContent->{$row->field});
     @endphp
     @if($decoded !== null)
-        @foreach(json_decode($dataTypeContent->{$row->field}) as $file)
+        @foreach($decoded as $file)
             <div data-field-name="{{ $row->field }}">
               <div class="row">
                 <div class="col-sm-11">

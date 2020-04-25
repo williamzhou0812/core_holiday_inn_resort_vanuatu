@@ -70,7 +70,7 @@ abstract class Controller extends BaseController
                 continue;
             }
 
-            $content = $this->getContentBasedOnType($request, $slug, $row, $row->details);
+            $content = $this->getContentBasedOnType($request, $slug, $row, $row->details, $data->{$row->field});
 
             if ($row->type == 'relationship' && $row->details->type != 'belongsToMany') {
                 $row->field = @$row->details->column;
@@ -238,7 +238,7 @@ abstract class Controller extends BaseController
         return Validator::make($data, $rules, $messages, $customAttributes);
     }
 
-    public function getContentBasedOnType(Request $request, $slug, $row, $options = null)
+    public function getContentBasedOnType(Request $request, $slug, $row, $options = null, $original_data = null)
     {
         switch ($row->type) {
             /********** PASSWORD TYPE **********/
@@ -279,7 +279,7 @@ abstract class Controller extends BaseController
                 return (new DateTime($request, $slug, $row, $options))->handle();
             /********** MEDIA FILES TYPE **********/
             case 'media_files':
-                return (new MediaFiles($request, $slug, $row, $options))->handle();
+                return (new MediaFiles($request, $slug, $row, $options, $original_data))->handle();
             /********** ALL OTHER TEXT TYPE **********/
             default:
                 return (new Text($request, $slug, $row, $options))->handle();
