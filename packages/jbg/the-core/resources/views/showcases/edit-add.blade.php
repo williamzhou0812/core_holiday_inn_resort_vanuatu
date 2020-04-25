@@ -258,6 +258,19 @@
                 }
             });
 
+            $('.form-control.datepart-picker').each(function(idx, elt) {
+              $(elt).datetimepicker({
+                format: 'DD/MM/YYYY',
+                defaultDate: $(elt).data('datepart')
+              });
+            });
+            $('.form-control.timepart-picker').each(function(idx, elt) {
+              $(elt).datetimepicker({
+                format: 'h:mm A',
+                defaultDate: $(elt).data('timepart')
+              });
+            });
+
             @if ($isModelTranslatable)
                 $('.side-body').multilingual({"editing": true});
             @endif
