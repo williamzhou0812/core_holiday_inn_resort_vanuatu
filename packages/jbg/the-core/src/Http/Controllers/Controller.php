@@ -21,6 +21,7 @@ use TCG\Voyager\Http\Controllers\ContentTypes\SelectMultiple;
 use TCG\Voyager\Http\Controllers\ContentTypes\Text;
 use TCG\Voyager\Http\Controllers\ContentTypes\Timestamp;
 use TCG\Voyager\Http\Controllers\ContentTypes\DateTime;
+use TCG\Voyager\Http\Controllers\ContentTypes\MediaFiles;
 use TCG\Voyager\Traits\AlertsMessages;
 use Validator;
 
@@ -101,6 +102,14 @@ abstract class Controller extends BaseController
 
                 // If the file upload is null and it has a current file keep the current file
                 if ($row->type == 'file') {
+                    $content = $data->{$row->field};
+                    if (!$content) {
+                        $content = json_encode([]);
+                    }
+                }
+
+                // If the file upload is null and it has a current file keep the current file
+                if ($row->type == 'media_files') {
                     $content = $data->{$row->field};
                     if (!$content) {
                         $content = json_encode([]);
@@ -268,6 +277,9 @@ abstract class Controller extends BaseController
             /********** DATE TIME TYPE **********/
             case 'datetime':
                 return (new DateTime($request, $slug, $row, $options))->handle();
+            /********** MEDIA FILES TYPE **********/
+            case 'media_files':
+                return (new MediaFiles($request, $slug, $row, $options))->handle();
             /********** ALL OTHER TEXT TYPE **********/
             default:
                 return (new Text($request, $slug, $row, $options))->handle();

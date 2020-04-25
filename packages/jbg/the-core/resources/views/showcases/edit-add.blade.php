@@ -152,11 +152,9 @@
                                 if (isset($typeRow)) {
                                     $fileType = $dataTypeContent->type;
                                 }
-                                $fileValue = $dataTypeContent->{$row->field};
-                                $fileList = json_decode($fileValue);
                                 @endphp
                                 <div class="form-group col-md-12 {{ $errors->has($row->field) ? 'has-error' : '' }}">
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                    <label class="control-label" for="name">{{ $fileType }}</label>
                                     @include('voyager::multilingual.input-hidden-bread-edit-add')
                                     {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
                                     @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
