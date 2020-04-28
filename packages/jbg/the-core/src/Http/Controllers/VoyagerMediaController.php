@@ -25,12 +25,14 @@ class VoyagerMediaController extends Controller
         $this->filesystem = config('voyager.storage.disk');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         // Check permission
         $this->authorize('browse_media');
-
-        return Voyager::view('voyager::media.index');
+        // retrieve special parameter from request
+        $requestId = $request->input('request_id');
+        $allowSelectFiles = (isset($requestId) && !empty($requestId));
+        return Voyager::view('voyager::media.index', compact('allowSelectFiles'));
     }
 
     public function files(Request $request)
