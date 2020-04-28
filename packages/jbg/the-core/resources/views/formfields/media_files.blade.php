@@ -45,5 +45,15 @@
     @endif
     </div>
 @endif
-<input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
+    <div class="upload-section">
+        <div class="file-uploader">
+            <input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
+        </div>
+        <div class="or-text">
+        or
+        </div>
+        <div class="browse-media">
+            <button name="{{ $row->field }}_browse_media" type="submit" class="btn btn-warning btn-browse-media"  value="browse_media"><i class="voyager-documentation"></i> Browse Library</button>
+        </div>
+    </div>
 </div>

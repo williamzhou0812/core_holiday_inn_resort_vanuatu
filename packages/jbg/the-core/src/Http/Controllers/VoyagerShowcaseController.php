@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataDeleted;
@@ -15,6 +16,7 @@ use TCG\Voyager\Events\BreadDataUpdated;
 use TCG\Voyager\Events\BreadImagesDeleted;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
+
 
 class VoyagerShowcaseController extends VoyagerBaseController
 {
@@ -96,6 +98,17 @@ class VoyagerShowcaseController extends VoyagerBaseController
 
         // Check permission
         $this->authorize('edit', $data);
+
+        // check if browse media button click, this is very specific implementation
+        $browseMedia = $request->input('file_browse_media');
+        if (isset($browseMedia)) {
+            // create uuid
+            $uuid = (string) Str::uuid();
+            // store request inputs into session
+            $request->session()->put('showcases.browse_media-' . $uuid, $request->all());
+            // redirect to media index page
+            return redirect()->route('voyager.media.index', array('requestid'=>$uuid));
+        }
 
         // find all fields that have media file type
         $originalList = array();
