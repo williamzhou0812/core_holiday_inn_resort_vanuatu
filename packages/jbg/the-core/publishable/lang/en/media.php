@@ -34,6 +34,7 @@ return [
     'no_files_in_folder'     => 'No files in this folder.',
     'nothing_selected'       => 'No file or folder selected',
     'rename_file_folder'     => 'Rename File/Folder',
+    'select_files'          => 'Select files',
     'success_uploaded_file'  => 'Successfully uploaded new file!',
     'success_uploading'      => 'Image successfully uploaded!',
     'success_moved'          => 'Successfully moved file/folder',

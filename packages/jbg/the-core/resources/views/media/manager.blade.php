@@ -68,6 +68,10 @@
                 {{ __('voyager::media.crop') }}
             </button>
         </div>
+        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || (!fileIs(selected_file, 'video') && !fileIs(selected_file, 'image'))" type="button" class="btn btn-default" v-on:click="selectFiles()">
+            <i class="voyager-check"></i>
+            {{ __('voyager::media.select_files') }}
+        </button>
     </div>
     <div id="uploadPreview" style="display:none;" v-if="allowUpload"></div>
     <div id="uploadProgress" class="progress active progress-striped" v-if="allowUpload">
@@ -427,6 +431,10 @@
                     return {};
                 }
             },
+            allowSelectFiles: {
+                type: Boolean,
+                default: true
+            },
         },
         data: function() {
             return {
@@ -775,7 +783,26 @@
                 return suffixes.some(function (suffix) {
                     return string.endsWith(suffix);
                 });
-            }
+            },
+            selectFiles: function() {
+                alert('haha');
+                /*
+                var vm = this;
+                vm.is_loading = true;
+                $.post('{{ route('voyager.media.files') }}', { folder: vm.current_folder, _token: '{{ csrf_token() }}', details: vm.details }, function(data) {
+                    vm.files = [];
+                    for (var i = 0, file; file = data[i]; i++) {
+                        if (vm.filter(file)) {
+                            vm.files.push(file);
+                        }
+                    }
+                    vm.selected_files = [];
+                    if (vm.preSelect && data.length > 0) {
+                        vm.selected_files.push(data[0]);
+                    }
+                    vm.is_loading = false;
+                });*/
+            },
         },
         mounted: function() {
             this.getFiles();

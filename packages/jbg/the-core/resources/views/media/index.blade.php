@@ -23,7 +23,7 @@
                         :allow-rename="{{ config('voyager.media.allow_rename', true) ? 'true' : 'false' }}"
                         :allow-crop="{{ config('voyager.media.allow_crop', true) ? 'true' : 'false' }}"
                         :details="{{ json_encode(['thumbnails' => config('voyager.media.thumbnails', []), 'watermark' => config('voyager.media.watermark', (object)[])]) }}"
-                        :allow_select-files="{{ $allowSelectFiles  ? 'true' : 'false'}}"
+                        :allow-select-files="{{ $allowSelectFiles  ? 'true' : 'false'}}"
                         ></media-manager>
                 </div>
             </div><!-- .row -->
