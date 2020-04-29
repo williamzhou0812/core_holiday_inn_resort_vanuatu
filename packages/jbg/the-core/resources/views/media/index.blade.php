@@ -24,6 +24,7 @@
                         :allow-crop="{{ config('voyager.media.allow_crop', true) ? 'true' : 'false' }}"
                         :details="{{ json_encode(['thumbnails' => config('voyager.media.thumbnails', []), 'watermark' => config('voyager.media.watermark', (object)[])]) }}"
                         :allow-select-files="{{ $allowSelectFiles  ? 'true' : 'false'}}"
+                        request-id="{{ $requestId }}"
                         ></media-manager>
                 </div>
             </div><!-- .row -->

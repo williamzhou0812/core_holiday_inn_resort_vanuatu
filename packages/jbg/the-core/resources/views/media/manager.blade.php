@@ -435,6 +435,10 @@
                 type: Boolean,
                 default: true
             },
+            requestId: {
+                type: String,
+                default: ''
+            },
         },
         data: function() {
             return {
@@ -789,24 +793,21 @@
                     return;
                 }
                 var vm = this;
-                alert(vm.current_folder);
-                alert(vm.selected_files[0].name);
-                /*
-                var vm = this;
                 vm.is_loading = true;
-                $.post('{{ route('voyager.media.files') }}', { folder: vm.current_folder, _token: '{{ csrf_token() }}', details: vm.details }, function(data) {
-                    vm.files = [];
-                    for (var i = 0, file; file = data[i]; i++) {
-                        if (vm.filter(file)) {
-                            vm.files.push(file);
-                        }
-                    }
-                    vm.selected_files = [];
-                    if (vm.preSelect && data.length > 0) {
-                        vm.selected_files.push(data[0]);
-                    }
+                $.post('{{ route('voyager.media.select_files') }}', {
+                    path: vm.current_folder,
+                    files: vm.selected_files,
+                    _token: '{{ csrf_token() }}',
+                    requestid: this.requestId
+                }, function(data) {
                     vm.is_loading = false;
-                });*/
+                    if(data.success == true) {
+                        window.location.href = data.redirect;
+                    }
+                    else {
+                        alert('Invalid request.');
+                    }
+                });
             },
         },
         mounted: function() {

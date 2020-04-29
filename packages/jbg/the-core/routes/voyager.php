@@ -115,6 +115,7 @@ Route::group(['as' => 'voyager.'], function () {
             Route::post('rename_file', ['uses' => $namespacePrefix.'VoyagerMediaController@rename',        'as' => 'rename']);
             Route::post('upload', ['uses' => $namespacePrefix.'VoyagerMediaController@upload',             'as' => 'upload']);
             Route::post('crop', ['uses' => $namespacePrefix.'VoyagerMediaController@crop',             'as' => 'crop']);
+            Route::post('select_files', ['uses' => $namespacePrefix.'VoyagerMediaController@select_files', 'as' => 'select_files']);
         });
 
         Route::group([
@@ -129,6 +130,7 @@ Route::group(['as' => 'voyager.'], function () {
             Route::post('rename_file', ['uses' => $namespacePrefix.'VoyagerMediaController@rename',        'as' => 'rename']);
             Route::post('upload', ['uses' => $namespacePrefix.'VoyagerMediaController@upload',             'as' => 'upload']);
             Route::post('crop', ['uses' => $namespacePrefix.'VoyagerMediaController@crop',             'as' => 'crop']);
+            Route::post('select_files', ['uses' => $namespacePrefix.'VoyagerMediaController@select_files',              'as' => 'select_files']);
         });
 
         // BREAD Routes

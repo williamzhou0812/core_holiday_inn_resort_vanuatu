@@ -104,10 +104,13 @@ class VoyagerShowcaseController extends VoyagerBaseController
         if (isset($browseMedia)) {
             // create uuid
             $uuid = (string) Str::uuid();
+            // data
+            $session_data = $request->all();
+            $session_data['redirect'] = $request->url() . '/edit';
             // store request inputs into session
-            $request->session()->put('showcases.browse_media-' . $uuid, $request->all());
+            $request->session()->put('showcases.browse_media-' . $uuid, $session_data);
             // redirect to media index page
-            return redirect()->route('voyager.media.index', array('request_id'=>$uuid));
+            return redirect()->route('voyager.library.index', array('request_id'=>$uuid));
         }
 
         // find all fields that have media file type
