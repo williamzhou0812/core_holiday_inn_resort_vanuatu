@@ -245,10 +245,27 @@ class VoyagerShowcaseController extends VoyagerBaseController
                             $updated_files[] = $obj;
                         }
                     }
+
+                    // get selected files
+                    $selectedFiles = $request->session()->get('showcases.browse_media_files-' . $requestId);
+                    if (isset($selectedFiles)) {
+                        foreach($selectedFiles as $newfile) {
+                            $download_link = ltrim(str_replace('/', "\\", $newfile), "\\");
+                            $ext = pathinfo($newfile);
+                            $updated_files[] = array(
+                                'download_link' => ltrim(str_replace('/', "\\", $newfile), "\\"),
+                                'original_name' => $ext['basename'],
+                                'mime_type' => strtolower($dataTypeContent->type .  '/' . $ext['extension']),
+                                'reference_only' => 'true'
+                            );
+                        }
+                    }
+
                     $updated_json = json_encode($updated_files);
                     $dataTypeContent->file = $updated_json;
                 }
             }
+
         }
 
         foreach ($dataType->editRows as $key => $row) {
