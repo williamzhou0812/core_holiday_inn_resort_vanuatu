@@ -77,21 +77,11 @@
                                         @endforeach
                                     @endif
                                 </div>
-                                @php
-                                $row = $dataTypeRowsDict['type'];
-                                @endphp
-                                <div class="form-group col-md-4 {{ $errors->has($row->field) ? 'has-error' : '' }}">
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
-                                    @include('voyager::multilingual.input-hidden-bread-edit-add')
-                                    {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
-                                    @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
-                                        {!! $after->handle($row, $dataType, $dataTypeContent) !!}
-                                    @endforeach
-                                    @if ($errors->has($row->field))
-                                        @foreach ($errors->get($row->field) as $error)
-                                            <span class="help-block">{{ $error }}</span>
-                                        @endforeach
-                                    @endif
+                                <div class="form-group col-md-4">
+                                    <label class="control-label" for="name">Type</label>
+                                    <div class="type-display">
+                                     {{ $dataTypeContent->type }}
+                                    </div>
                                 </div>
                                 @php
                                 $row = $dataTypeRowsDict['display_status'];
@@ -148,10 +138,7 @@
                                 @php
                                 $row = $dataTypeRowsDict['file'];
                                 $fileType = 'Image'; // default to image
-                                $typeRow = $dataTypeRowsDict['type'];
-                                if (isset($typeRow)) {
-                                    $fileType = $dataTypeContent->type;
-                                }
+                                $fileType = $dataTypeContent->type;
                                 @endphp
                                 <div class="form-group col-md-12 {{ $errors->has($row->field) ? 'has-error' : '' }}">
                                     <label class="control-label" for="name">{{ $fileType }}</label>
