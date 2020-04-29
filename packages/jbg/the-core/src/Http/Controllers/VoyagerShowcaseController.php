@@ -224,12 +224,32 @@ class VoyagerShowcaseController extends VoyagerBaseController
                     $carbonDate = Carbon::create($dateInfo['year'], $dateInfo['month'], $dateInfo['day'], $dateInfo['hour'], $dateInfo['minute']);
                     $dataTypeContent->$row_field = $carbonDate->toDateTimeString();
                 }
+                else if ($row_field == 'file') {
+                    // get file list from session
+                    $file_files = (array_key_exists('file_files', $sessionData)) ? $sessionData['file_files'] : [];
+                    $file_json =  $dataTypeContent->file;
+                    if (!isset($file_json))
+                        $file_json = '[]';
+                    $file_objs = json_decode($file_json);
+                    $updated_files = array();
+                    foreach($file_objs as $obj) {
+                        $link = $obj->download_link;
+                        $found = false;
+                        foreach($file_files as $session_file) {
+                            if ($link == $session_file) {
+                                $found  = true;
+                                break;
+                            }
+                        }
+                        if ($found) {
+                            $updated_files[] = $obj;
+                        }
+                    }
+                    $updated_json = json_encode($updated_files);
+                    $dataTypeContent->file = $updated_json;
+                }
             }
         }
-
-
-
-        //throw new \Mockery\CountValidator\Exception("ddd");
 
         foreach ($dataType->editRows as $key => $row) {
             $dataType->editRows[$key]['col_width'] = isset($row->details->width) ? $row->details->width : 100;

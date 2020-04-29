@@ -314,9 +314,9 @@
                 }
                 else if($('.confirm_delete_type').text() == "mediafiles") {
                     $file.parent().parent().parent().fadeOut(300, function() { $(this).remove(); });
-                    if ($('.' + params.field + '_data').length <= 1) {
+                    /*if ($('.' + params.field + '_data').length <= 1) {
                         $(document.getElementsByName(params.field + '[]')[0]).attr('required',true);
-                    }
+                    }*/
                 }
 
                 $('#confirm_delete_modal').modal('hide');
