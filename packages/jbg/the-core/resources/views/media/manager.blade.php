@@ -785,7 +785,12 @@
                 });
             },
             selectFiles: function() {
-                alert('haha');
+                if (!this.allowSelectFiles) {
+                    return;
+                }
+                var vm = this;
+                alert(vm.current_folder);
+                alert(vm.selected_files[0].name);
                 /*
                 var vm = this;
                 vm.is_loading = true;
