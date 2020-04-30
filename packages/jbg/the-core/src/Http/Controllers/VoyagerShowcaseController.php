@@ -119,6 +119,7 @@ class VoyagerShowcaseController extends VoyagerBaseController
         // find all fields that have media file type
         $originalList = array();
         foreach ($dataType->editRows->where('type', 'media_files') as $row) {
+            // collect original data
             if (isset($data->{$row->field})) {
                 $originalList = array_merge($originalList,  json_decode($data->{$row->field}));
             }
@@ -256,7 +257,8 @@ class VoyagerShowcaseController extends VoyagerBaseController
                                 'download_link' => ltrim(str_replace('/', "\\", $newfile), "\\"),
                                 'original_name' => $ext['basename'],
                                 'mime_type' => strtolower($dataTypeContent->type .  '/' . $ext['extension']),
-                                'reference_only' => 'true'
+                                'reference_only' => 'true',
+                                'added' => 'true'
                             );
                         }
                     }

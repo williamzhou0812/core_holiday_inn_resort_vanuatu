@@ -58,28 +58,43 @@ class MediaFiles extends BaseType
         }
 
         // check if files being uploaded
-        if (!$this->request->hasFile($this->row->field)) {
-            return json_encode($remaining_list);
+        if ($this->request->hasFile($this->row->field)) {
+            // process uploaded files
+            $files = Arr::wrap($this->request->file($this->row->field));
+            $path = $this->generatePath();
+
+            foreach ($files as $file) {
+                $filename = $this->generateFileName($file, $path);
+                $file->storeAs(
+                    $path,
+                    $filename.'.'.$file->getClientOriginalExtension(),
+                    config('voyager.storage.disk', 'public')
+                );
+
+                array_push($remaining_list, [
+                    'download_link' => $path.$filename.'.'.$file->getClientOriginalExtension(),
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getClientMimeType()
+                ]);
+            }
         }
 
-        // process uploaded files
-        $files = Arr::wrap($this->request->file($this->row->field));
-        $path = $this->generatePath();
-
-        foreach ($files as $file) {
-            $filename = $this->generateFileName($file, $path);
-            $file->storeAs(
-                $path,
-                $filename.'.'.$file->getClientOriginalExtension(),
-                config('voyager.storage.disk', 'public')
+        // process file browsed from library
+        $selected_file_list = $this->request->input($this->row->field . '_added_files');
+        if (!isset($selected_file_list)) {
+            $selected_file_list = array();
+        }
+        foreach($selected_file_list as $selected_file_link) {
+            $download_link = ltrim(str_replace('/', "\\", $selected_file_link), "\\");
+            $ext = pathinfo($selected_file_link);
+            $remaining_list[] = array(
+                'download_link' => $download_link,
+                'original_name' => $ext['basename'],
+                'mime_type' => strtolower('image/' . $ext['extension']),
+                'reference_only' => 'true'
             );
-
-            array_push($remaining_list, [
-                'download_link' => $path.$filename.'.'.$file->getClientOriginalExtension(),
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getClientMimeType()
-            ]);
         }
+
         return json_encode($remaining_list);
     }
 

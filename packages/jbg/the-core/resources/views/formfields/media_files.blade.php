@@ -28,7 +28,11 @@
                 </div>
                 <div class="col-sm-1">
                     <a href="#" class="voyager-x remove-multi-media-file" title="Delete"></a>
+                    @if (property_exists($file, 'added') && $file->added == 'true')
+                     <input type="hidden" name="{{ $row->field }}_added_files[]" value="{{ $file->download_link }}" class="{{ $row->field }}_data">
+                    @else
                     <input type="hidden" name="{{ $row->field }}_files[]" value="{{ $file->download_link }}" class="{{ $row->field }}_data">
+                    @endif
                 </div>
               </div>
             </div>
