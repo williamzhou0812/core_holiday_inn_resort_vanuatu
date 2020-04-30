@@ -47,7 +47,7 @@
         <a href="#" class="voyager-x remove-single-file"></a>
       </div>
     @endif
-    </div>
+
 @endif
     <div class="upload-section">
         <div class="file-uploader">
@@ -59,5 +59,6 @@
         <div class="browse-media">
             <button name="{{ $row->field }}_browse_media" type="submit" class="btn btn-warning btn-browse-media"  value="browse_media"><i class="voyager-documentation"></i> Browse Library</button>
         </div>
+        <div style="clear: both;"></div>
     </div>
 </div>
