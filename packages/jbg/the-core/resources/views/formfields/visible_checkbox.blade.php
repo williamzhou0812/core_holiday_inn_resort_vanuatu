@@ -7,7 +7,6 @@
         filter_var($options->checked, FILTER_VALIDATE_BOOLEAN) ? true: false; ?>
 @endif
 <div class="visible_chk_panel">
-    <br>
     <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
     <label class="el-switch el-switch-sm">
     @if(isset($options->on) && isset($options->off))
