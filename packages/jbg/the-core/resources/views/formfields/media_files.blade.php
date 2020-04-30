@@ -28,7 +28,11 @@
                 </div>
                 <div class="col-sm-1">
                     <a href="#" class="voyager-x remove-multi-media-file" title="Delete"></a>
-                    <input type="hidden" name="{{ $row->field }}_files[]" value="{{ $file->download_link }}">
+                    @if (property_exists($file, 'added') && $file->added == 'true')
+                     <input type="hidden" name="{{ $row->field }}_added_files[]" value="{{ $file->download_link }}" class="{{ $row->field }}_data">
+                    @else
+                    <input type="hidden" name="{{ $row->field }}_files[]" value="{{ $file->download_link }}" class="{{ $row->field }}_data">
+                    @endif
                 </div>
               </div>
             </div>
@@ -45,5 +49,15 @@
     @endif
     </div>
 @endif
-<input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
+    <div class="upload-section">
+        <div class="file-uploader">
+            <input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
+        </div>
+        <div class="or-text">
+        or
+        </div>
+        <div class="browse-media">
+            <button name="{{ $row->field }}_browse_media" type="submit" class="btn btn-warning btn-browse-media"  value="browse_media"><i class="voyager-documentation"></i> Browse Library</button>
+        </div>
+    </div>
 </div>

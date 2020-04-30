@@ -68,6 +68,10 @@
                 {{ __('voyager::media.crop') }}
             </button>
         </div>
+        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || (!fileIs(selected_file, 'video') && !fileIs(selected_file, 'image'))" type="button" class="btn btn-default" v-on:click="selectFiles()">
+            <i class="voyager-check"></i>
+            {{ __('voyager::media.select_files') }}
+        </button>
     </div>
     <div id="uploadPreview" style="display:none;" v-if="allowUpload"></div>
     <div id="uploadProgress" class="progress active progress-striped" v-if="allowUpload">
@@ -427,6 +431,14 @@
                     return {};
                 }
             },
+            allowSelectFiles: {
+                type: Boolean,
+                default: true
+            },
+            requestId: {
+                type: String,
+                default: ''
+            },
         },
         data: function() {
             return {
@@ -775,7 +787,28 @@
                 return suffixes.some(function (suffix) {
                     return string.endsWith(suffix);
                 });
-            }
+            },
+            selectFiles: function() {
+                if (!this.allowSelectFiles) {
+                    return;
+                }
+                var vm = this;
+                vm.is_loading = true;
+                $.post('{{ route('voyager.media.select_files') }}', {
+                    path: vm.current_folder,
+                    files: vm.selected_files,
+                    _token: '{{ csrf_token() }}',
+                    requestid: this.requestId
+                }, function(data) {
+                    vm.is_loading = false;
+                    if(data.success == true) {
+                        window.location.href = data.redirect;
+                    }
+                    else {
+                        alert('Invalid request.');
+                    }
+                });
+            },
         },
         mounted: function() {
             this.getFiles();

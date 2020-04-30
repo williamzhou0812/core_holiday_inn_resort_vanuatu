@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use PHPUnit\Framework\ExpectationFailedException;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataDeleted;
@@ -14,7 +16,10 @@ use TCG\Voyager\Events\BreadDataRestored;
 use TCG\Voyager\Events\BreadDataUpdated;
 use TCG\Voyager\Events\BreadImagesDeleted;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Http\Controllers\ContentTypes\DateTime;
 use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
+use Carbon\Carbon;
+
 
 class VoyagerShowcaseController extends VoyagerBaseController
 {
@@ -97,9 +102,24 @@ class VoyagerShowcaseController extends VoyagerBaseController
         // Check permission
         $this->authorize('edit', $data);
 
+        // check if browse media button click, this is very specific implementation
+        $browseMedia = $request->input('file_browse_media');
+        if (isset($browseMedia)) {
+            // create uuid
+            $uuid = (string) Str::uuid();
+            // data
+            $session_data = $request->all();
+            $session_data['redirect'] = $request->url() . '/edit';
+            // store request inputs into session
+            $request->session()->put('showcases.browse_media-' . $uuid, $session_data);
+            // redirect to media index page
+            return redirect()->route('voyager.library.index', array('request_id'=>$uuid));
+        }
+
         // find all fields that have media file type
         $originalList = array();
         foreach ($dataType->editRows->where('type', 'media_files') as $row) {
+            // collect original data
             if (isset($data->{$row->field})) {
                 $originalList = array_merge($originalList,  json_decode($data->{$row->field}));
             }
@@ -128,9 +148,13 @@ class VoyagerShowcaseController extends VoyagerBaseController
                 }
             }
             if (!$found) {
-                $deleted_list[] = $toCheck;
+                // check if it is a reference only
+                if (!property_exists($toCheck, 'reference_only') || $toCheck->reference_only !== 'true') {
+                    $deleted_list[] = $toCheck;
+                }
             }
         }
+        
         // delete actual files
         foreach ($deleted_list as $file) {
             $this->deleteFileIfExists($file->download_link);
@@ -149,4 +173,127 @@ class VoyagerShowcaseController extends VoyagerBaseController
             'alert-type' => 'success',
         ]);
     }
+
+    public function edit(Request $request, $id)
+    {
+        $slug = $this->getSlug($request);
+
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        if (strlen($dataType->model_name) != 0) {
+            $model = app($dataType->model_name);
+
+            // Use withTrashed() if model uses SoftDeletes and if toggle is selected
+            if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+                $model = $model->withTrashed();
+            }
+            if ($dataType->scope && $dataType->scope != '' && method_exists($model, 'scope'.ucfirst($dataType->scope))) {
+                $model = $model->{$dataType->scope}();
+            }
+            $dataTypeContent = call_user_func([$model, 'findOrFail'], $id);
+        } else {
+            // If Model doest exist, get data from table name
+            $dataTypeContent = DB::table($dataType->name)->where('id', $id)->first();
+        }
+
+        // retrieve special parameter from request
+        $requestId = $request->input('request_id');
+        if (!isset($requestId))
+            $requestId = '';
+        // check if session data exists
+        $sessionData = $request->session()->get('showcases.browse_media-' . $requestId);
+        if (isset($sessionData)) {
+            // override data
+            foreach ($dataType->editRows as $key => $row) {
+                $row_field = $row->field;
+                if (array_key_exists($row_field, $sessionData)) {
+                    $dataTypeContent->$row_field = $sessionData[$row_field];
+                }
+                else if (array_key_exists($row_field . '_datepart', $sessionData)) {
+                    // parse date time
+                    // get date and time part
+                    $contentDatePart = $sessionData[$row_field . '_datepart'];
+                    $contentTimePart = $sessionData[$row_field . '_timepart'];
+
+                    if (!isset($contentDatePart) || empty($contentDatePart)) {
+                        $dataTypeContent->$row_field = null;
+                        continue;
+                    }
+                    if (!isset($contentTimePart) || empty($contentTimePart)) {
+                        $contentTimePart = '12:00 AM';
+                    }
+                    // parse date time
+                    $contentInput = $contentDatePart . ' ' . $contentTimePart;
+                    $format = 'j/n/Y+ g:i A';
+                    $dateInfo = date_parse_from_format($format, $contentInput);
+                    $carbonDate = Carbon::create($dateInfo['year'], $dateInfo['month'], $dateInfo['day'], $dateInfo['hour'], $dateInfo['minute']);
+                    $dataTypeContent->$row_field = $carbonDate->toDateTimeString();
+                }
+                else if ($row_field == 'file') {
+                    // get file list from session
+                    $file_files = (array_key_exists('file_files', $sessionData)) ? $sessionData['file_files'] : [];
+                    $file_json =  $dataTypeContent->file;
+                    if (!isset($file_json))
+                        $file_json = '[]';
+                    $file_objs = json_decode($file_json);
+                    $updated_files = array();
+                    foreach($file_objs as $obj) {
+                        $link = $obj->download_link;
+                        $found = false;
+                        foreach($file_files as $session_file) {
+                            if ($link == $session_file) {
+                                $found  = true;
+                                break;
+                            }
+                        }
+                        if ($found) {
+                            $updated_files[] = $obj;
+                        }
+                    }
+
+                    // get selected files
+                    $selectedFiles = $request->session()->get('showcases.browse_media_files-' . $requestId);
+                    if (isset($selectedFiles)) {
+                        foreach($selectedFiles as $newfile) {
+                            $download_link = ltrim(str_replace('/', "\\", $newfile), "\\");
+                            $ext = pathinfo($newfile);
+                            $updated_files[] = array(
+                                'download_link' => ltrim(str_replace('/', "\\", $newfile), "\\"),
+                                'original_name' => $ext['basename'],
+                                'mime_type' => strtolower($dataTypeContent->type .  '/' . $ext['extension']),
+                                'reference_only' => 'true',
+                                'added' => 'true'
+                            );
+                        }
+                    }
+
+                    $updated_json = json_encode($updated_files);
+                    $dataTypeContent->file = $updated_json;
+                }
+            }
+
+        }
+
+        foreach ($dataType->editRows as $key => $row) {
+            $dataType->editRows[$key]['col_width'] = isset($row->details->width) ? $row->details->width : 100;
+        }
+
+        // If a column has a relationship associated with it, we do not want to show that field
+        $this->removeRelationshipField($dataType, 'edit');
+
+        // Check permission
+        $this->authorize('edit', $dataTypeContent);
+
+        // Check if BREAD is Translatable
+        $isModelTranslatable = is_bread_translatable($dataTypeContent);
+
+        $view = 'voyager::bread.edit-add';
+
+        if (view()->exists("voyager::$slug.edit-add")) {
+            $view = "voyager::$slug.edit-add";
+        }
+
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+    }
+
 }
