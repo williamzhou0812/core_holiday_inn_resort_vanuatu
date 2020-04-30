@@ -20,7 +20,7 @@
 @stop
 
 @section('content')
-    <div class="page-content edit-add container-fluid">
+    <div class="page-content edit-add container-fluid showcase-edit">
         <div class="row">
             <div class="col-md-12">
 
@@ -60,11 +60,11 @@
                                 }
                             @endphp
 
-                            <div class="row">
+                            <div class="row bottom-border">
                                 @php
                                 $row = $dataTypeRowsDict['name'];
                                 @endphp
-                                <div class="form-group col-md-5 {{ $errors->has($row->field) ? 'has-error' : '' }}">
+                                <div class="form-group col-md-5 {{ $errors->has($row->field) ? 'has-error' : '' }} title-panel">
                                     <label class="control-label" for="name">{{ __('voyager::generic.title') }}</label>
                                     @include('voyager::multilingual.input-hidden-bread-edit-add')
                                     {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
@@ -87,7 +87,7 @@
                                 $row = $dataTypeRowsDict['display_status'];
                                 @endphp
                                 <div class="form-group col-md-3 {{ $errors->has($row->field) ? 'has-error' : '' }}">
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                    <label class="control-label" for="name">Visibility</label>
                                     @include('voyager::multilingual.input-hidden-bread-edit-add')
                                     {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
                                     @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
@@ -100,38 +100,42 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row bottom-border">
                                 @php
                                 $row = $dataTypeRowsDict['display_from'];
                                 @endphp
-                                <div class="form-group col-md-5 {{ $errors->has($row->field) ? 'has-error' : '' }}">
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
-                                    @include('voyager::multilingual.input-hidden-bread-edit-add')
-                                    {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
-                                    @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
-                                        {!! $after->handle($row, $dataType, $dataTypeContent) !!}
-                                    @endforeach
-                                    @if ($errors->has($row->field))
-                                        @foreach ($errors->get($row->field) as $error)
-                                            <span class="help-block">{{ $error }}</span>
+                                <div class="form-group col-md-5 {{ $errors->has($row->field) ? 'has-error' : '' }} display-from-panel">
+                                    <div class="full-border">
+                                        <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                        @include('voyager::multilingual.input-hidden-bread-edit-add')
+                                        {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
+                                        @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
+                                            {!! $after->handle($row, $dataType, $dataTypeContent) !!}
                                         @endforeach
-                                    @endif
+                                        @if ($errors->has($row->field))
+                                            @foreach ($errors->get($row->field) as $error)
+                                                <span class="help-block">{{ $error }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
                                 @php
                                 $row = $dataTypeRowsDict['display_to'];
                                 @endphp
-                                <div class="form-group col-md-7 {{ $errors->has($row->field) ? 'has-error' : '' }}">
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
-                                    @include('voyager::multilingual.input-hidden-bread-edit-add')
-                                    {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
-                                    @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
-                                        {!! $after->handle($row, $dataType, $dataTypeContent) !!}
-                                    @endforeach
-                                    @if ($errors->has($row->field))
-                                        @foreach ($errors->get($row->field) as $error)
-                                            <span class="help-block">{{ $error }}</span>
+                                <div class="form-group col-md-7 {{ $errors->has($row->field) ? 'has-error' : '' }} display-to-panel">
+                                    <div class="full-border">
+                                        <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                        @include('voyager::multilingual.input-hidden-bread-edit-add')
+                                        {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
+                                        @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
+                                            {!! $after->handle($row, $dataType, $dataTypeContent) !!}
                                         @endforeach
-                                    @endif
+                                        @if ($errors->has($row->field))
+                                            @foreach ($errors->get($row->field) as $error)
+                                                <span class="help-block">{{ $error }}</span>
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -140,7 +144,7 @@
                                 $fileType = 'Image'; // default to image
                                 $fileType = $dataTypeContent->type;
                                 @endphp
-                                <div class="form-group col-md-12 {{ $errors->has($row->field) ? 'has-error' : '' }}">
+                                <div class="form-group col-md-12 {{ $errors->has($row->field) ? 'has-error' : '' }} file-panel">
                                     <label class="control-label" for="name">{{ $fileType }}</label>
                                     @include('voyager::multilingual.input-hidden-bread-edit-add')
                                     {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
