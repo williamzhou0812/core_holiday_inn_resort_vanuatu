@@ -29,6 +29,7 @@ Route::get('foodanddiningout', 'FoodAndDiningOutController@FoodAndDiningOut');
 Route::get('holidayinnresortvanauatucate', 'HolidayInnResortVanuatucategoriesController@HolidayInnResortVanuatuCategories');
 Route::get('sections', 'SectionsController@sections');
 Route::get('headers', 'HeadersController@headers');
+Route::get('showcases', 'ShowcasesController@showcases');
 // pages
 Route::get('pages/{tableReferences}', 'PagesController@pages');
 Route::get('pages/{tableReferences}/{id}', 'PagesController@page');

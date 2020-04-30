@@ -25,13 +25,67 @@ class VoyagerMediaController extends Controller
         $this->filesystem = config('voyager.storage.disk');
     }
 
-    public function index()
+    public function index(Request $request)
+    {
+        // Check permission
+        $this->authorize('browse_media');
+        // retrieve special parameter from request
+        $requestId = $request->input('request_id');
+        if (!isset($requestId))
+            $requestId = '';
+        $allowSelectFiles = (isset($requestId) && !empty($requestId));
+        return Voyager::view('voyager::media.index', compact('allowSelectFiles', 'requestId'));
+    }
+
+    public function select_files(Request $request)
     {
         // Check permission
         $this->authorize('browse_media');
 
-        return Voyager::view('voyager::media.index');
+        // check request id exists in session
+        $request_id = $request->requestid;
+
+        if (!isset($request_id) || empty($request_id)) {
+            return response()->json(array('success' => false));
+        }
+        // check if session data exists
+        $session_data = $request->session()->get('showcases.browse_media-' . $request_id);
+        if (!isset($session_data)) {
+            return response()->json(array('success' => false));
+        }
+        // get redirect url
+        $redirect = $session_data['redirect'] . '?request_id=' . $request_id;
+
+        // get request data
+        $path = str_replace('//', '/', Str::finish($request->path, '/'));
+        $files = $request->get('files');
+        $success = true;
+        $file_paths = [];
+        // collect file info
+        foreach($files as $file) {
+            $file_path = $path.$file['name'];
+            if ($file['type'] == 'folder') {
+                // invalid request
+                $success = false;
+                break;
+            }
+            else {
+                $file_paths[] = $file_path;
+            }
+        }
+        // ensure file info are collected
+        if (sizeof($file_paths) > 0) {
+            // store selected file info in session
+            $request->session()->put('showcases.browse_media_files-' . $request_id, $file_paths);
+        }
+        else {
+            $success = false;
+        }
+        // return response
+        $response_data = array('success' => $success, 'redirect' => $redirect);
+        return response()->json($response_data);
     }
+
 
     public function files(Request $request)
     {
