@@ -148,9 +148,13 @@ class VoyagerShowcaseController extends VoyagerBaseController
                 }
             }
             if (!$found) {
-                $deleted_list[] = $toCheck;
+                // check if it is a reference only
+                if (!property_exists($toCheck, 'reference_only') || $toCheck->reference_only !== 'true') {
+                    $deleted_list[] = $toCheck;
+                }
             }
         }
+        
         // delete actual files
         foreach ($deleted_list as $file) {
             $this->deleteFileIfExists($file->download_link);
