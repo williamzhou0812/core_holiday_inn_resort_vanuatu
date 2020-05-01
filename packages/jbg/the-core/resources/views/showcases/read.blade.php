@@ -40,12 +40,12 @@
             $readRowsDict[$row->field] = $row;
         }
     @endphp;
-    <div class="page-content read container-fluid">
+    <div class="page-content read container-fluid showcase-read">
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered showcase-panel" style="padding-bottom:5px;">
-                    <div class="row">
-                        <div class="col-md-6">
+                    <div class="row bottom-border">
+                        <div class="col-md-6 title-panel">
                         @php
                         $row = $readRowsDict['name'];
                         @endphp
@@ -94,8 +94,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
+                    <div class="row bottom-border">
+                        <div class="col-md-3 created-panel">
                         @php
                         $row = $readRowsDict['created_at'];
                         @endphp
@@ -141,7 +141,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row no-border">
                         @php
                         $row = $readRowsDict['file'];
                         $fileType = 'Image'; // default to image
