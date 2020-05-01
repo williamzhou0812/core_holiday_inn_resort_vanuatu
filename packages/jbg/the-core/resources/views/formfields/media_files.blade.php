@@ -47,11 +47,11 @@
         <a href="#" class="voyager-x remove-single-file"></a>
       </div>
     @endif
-    </div>
+
 @endif
     <div class="upload-section">
         <div class="file-uploader">
-            <input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
+            <input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) @endif type="file" name="{{ $row->field }}[]" multiple="multiple">
         </div>
         <div class="or-text">
         or
@@ -59,5 +59,6 @@
         <div class="browse-media">
             <button name="{{ $row->field }}_browse_media" type="submit" class="btn btn-warning btn-browse-media"  value="browse_media"><i class="voyager-documentation"></i> Browse Library</button>
         </div>
+        <div style="clear: both;"></div>
     </div>
 </div>

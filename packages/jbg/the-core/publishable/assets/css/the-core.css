@@ -190,3 +190,79 @@ a.permission-deselect-all {
 .media-files-panel a.voyager-x:focus {
     text-decoration: none;
 }
+
+.media-files-panel .upload-section .file-uploader {
+    border: 1px solid #E4EAEC;
+    float: left;
+}
+.media-files-panel .upload-section .or-text{
+    float: left;
+    padding: 20px;
+}
+
+.media-files-panel .upload-section .browse-media {
+    float: left;
+    padding: 10px;
+}
+.showcase-edit .panel-body .bottom-border {
+    border-bottom: 1px solid #E4EAEC;
+    margin-bottom: 5px;
+}
+
+.showcase-edit .panel-body  .full-border {
+    border: 1px solid #E4EAEC;
+    padding: 10px;
+}
+
+.showcase-edit .panel-body{
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.showcase-edit .display-from-panel {
+    padding-left: 0px;
+    margin-top: 15px;
+}
+.showcase-edit .display-from-panel .timepart-label,
+.showcase-edit .display-from-panel .datepart-label,
+.showcase-edit .display-to-panel .timepart-label,
+.showcase-edit .display-to-panel .datepart-label {
+    font-size: 13px;
+}
+.showcase-edit .display-to-panel {
+    padding-right: 0px;
+    margin-top: 15px;
+}
+.showcase-edit .title-panel {
+    padding-left: 0px;
+}
+.showcase-edit .file-panel {
+    padding-left: 0px;
+}
+
+.showcase-read .showcase-panel {
+    padding: 15px 0px 15px 0px;
+}
+
+.showcase-read .bottom-border{
+    border-bottom: 1px solid #E4EAEC;
+    margin-bottom: 15px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.showcase-read .title-panel {
+    padding-left: 0px;
+}
+.showcase-read .title-panel .panel-title {
+    padding-left: 0px;
+}
+.showcase-read .created-panel {
+    padding-left: 0px;
+}
+.showcase-read .created-panel .panel-title {
+    padding-left: 0px;
+}
+.showcase-read .no-border {
+    margin-left: -10px;
+    margin-right: -10px;
+}
