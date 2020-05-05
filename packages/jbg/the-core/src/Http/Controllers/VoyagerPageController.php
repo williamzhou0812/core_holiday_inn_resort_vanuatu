@@ -20,8 +20,6 @@ class VoyagerPageController extends VoyagerBaseController
 {
     use BreadRelationshipParser;
 
-    private $page_model = 'TCG\Voyager\Models\Page';
-
     public function index(Request $request)
     {
         // get all available sections
@@ -64,7 +62,7 @@ class VoyagerPageController extends VoyagerBaseController
         $slug = $dataType->slug;
 
         // Check permission
-        $this->authorize('browse', app($this->page_model));
+        $this->authorize('browse', app($dataType->model_name));
 
         $getter = $dataType->server_side ? 'paginate' : 'get';
 
@@ -448,7 +446,7 @@ class VoyagerPageController extends VoyagerBaseController
         $slug = $dataType->slug;
 
         // Check permission
-        $this->authorize('add', app($this->page_model));
+        $this->authorize('add', app($dataType->model_name));
 
         $dataTypeContent = (strlen($dataType->model_name) != 0)
             ? new $dataType->model_name()
@@ -508,7 +506,7 @@ class VoyagerPageController extends VoyagerBaseController
         // ensure slug is provided
         $slug = $dataType->slug;
         // Check permission
-        $this->authorize('add', app($this->page_model));
+        $this->authorize('add', app($dataType->model_name));
 
         // Validate fields with ajax
         $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
@@ -565,7 +563,7 @@ class VoyagerPageController extends VoyagerBaseController
         $slug = $dataType->slug;
 
         // Check permission
-        $this->authorize('delete', app($this->page_model));
+        $this->authorize('delete', app($dataType->model_name));
 
         // Init array of IDs
         $ids = [];
@@ -638,7 +636,7 @@ class VoyagerPageController extends VoyagerBaseController
         $slug = $dataType->slug;
 
         // Check permission
-        $this->authorize('edit', app($this->page_model));
+        $this->authorize('edit', app($dataType->model_name));
 
         if (!isset($dataType->order_column) || !isset($dataType->order_display_column)) {
             return redirect()
@@ -702,7 +700,7 @@ class VoyagerPageController extends VoyagerBaseController
         $slug = $dataType->slug;
 
         // Check permission
-        $this->authorize('edit', $this-> app($this->page_model));
+        $this->authorize('edit', app($dataType->model_name));
 
         $model = app($dataType->model_name);
 
