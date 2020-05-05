@@ -8,6 +8,6 @@ use App\Header;
 class HeadersController extends Controller
 {
     public function headers() {
-        return response()->json(Header::get(), 200);
+        return response()->json(Header::where('visible','1')->get(), 200);
     }
 }
