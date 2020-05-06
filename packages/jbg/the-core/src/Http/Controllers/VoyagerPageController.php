@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\Access\AuthorizationException;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataDeleted;
@@ -23,10 +24,26 @@ class VoyagerPageController extends VoyagerBaseController
     public function index(Request $request)
     {
         // get all available sections
-        $sectionDataTypeContent = DB::table('sections')
+        $sectionDataTypeContentList = DB::table('sections')
             ->select('id','title','position', 'table_reference')
             ->whereNotNull('table_reference')
             ->orderBy('position','asc')->get();
+
+        // check table references permission
+        $sectionDataTypeContent = array();
+        foreach($sectionDataTypeContentList as $tableDataType) {
+            $tblReference = $tableDataType->table_reference;
+            $tblDataType = Voyager::model('DataType')->where('name', '=', $tblReference)->first();
+            if (isset($tblDataType)) {
+                try {
+                    $authResponse = $this->authorize('browse', app($tblDataType->model_name));
+                    $sectionDataTypeContent[] = $tableDataType;
+                }
+                catch(AuthorizationException $authEx) {
+                    // user is not authorized
+                }
+            }
+        }
 
         // set default $tableReference as first item table reference value
         $tableReference = '';
