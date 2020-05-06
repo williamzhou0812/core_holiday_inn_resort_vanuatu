@@ -6,7 +6,7 @@
     <meta name="robots" content="none" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta name="description" content="admin login">
-    <title>Admin - {{ Voyager::setting("admin.title") }}</title>
+    <title>The Core</title>
     <link rel="stylesheet" href="{{ voyager_asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ voyager_asset('css/the-core.css') }}">
     @if (__('voyager::generic.is_rtl') == 'true')
