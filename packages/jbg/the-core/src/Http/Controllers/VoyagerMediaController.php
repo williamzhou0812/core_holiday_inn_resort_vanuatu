@@ -33,8 +33,11 @@ class VoyagerMediaController extends Controller
         $requestId = $request->input('request_id');
         if (!isset($requestId))
             $requestId = '';
+        $filetype = $request->input('filetype');
+        if (!isset($filetype))
+            $filetype = 'image';
         $allowSelectFiles = (isset($requestId) && !empty($requestId));
-        return Voyager::view('voyager::media.index', compact('allowSelectFiles', 'requestId'));
+        return Voyager::view('voyager::media.index', compact('allowSelectFiles', 'requestId', 'filetype'));
     }
 
     public function select_files(Request $request)

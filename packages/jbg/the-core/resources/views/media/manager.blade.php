@@ -68,7 +68,7 @@
                 {{ __('voyager::media.crop') }}
             </button>
         </div>
-        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || (!fileIs(selected_file, 'video') && !fileIs(selected_file, 'image'))" type="button" class="btn btn-default" v-on:click="selectFiles()">
+        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || !filetypeIs(selected_file)" type="button" class="btn btn-default" v-on:click="selectFiles()">
             <i class="voyager-check"></i>
             {{ __('voyager::media.select_files') }}
         </button>
@@ -439,6 +439,10 @@
                 type: String,
                 default: ''
             },
+            filetype: {
+                type: String,
+                default: 'image'
+            },
         },
         data: function() {
             return {
@@ -549,6 +553,24 @@
                 if (typeof file === 'string') {
                     if (type == 'image') {
                         return this.endsWithAny(['jpg', 'jpeg', 'png', 'bmp'], file);
+                    }
+                    //Todo: add other types
+                } else {
+                    return file.type.includes(type);
+                }
+
+                return false;
+			},
+            filetypeIs: function(file) {
+            type = this.filetype;
+                if (typeof file === 'string') {
+                    //type = this.filetype;
+                    alert(type);
+                    if (type == 'image') {
+                        return this.endsWithAny(['jpg', 'jpeg', 'png', 'bmp'], file);
+                    }
+                    else if (type == 'video') {
+                        return this.endsWithAny(['mp4', 'avi', 'wmv'], file);
                     }
                     //Todo: add other types
                 } else {
