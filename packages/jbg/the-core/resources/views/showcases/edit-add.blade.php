@@ -345,11 +345,20 @@
 
             @php
                 $fileType = $dataTypeContent->type;
+                if (empty($fileType))
+                    $fileType = 'image';
             @endphp
             var $default_file_type = '{{ $fileType }}';
 
+            $('.type-select').on('change',function(a) {
+                $default_file_type = $(this).val().toLowerCase();
+                 $('.media_file_uploader').each(function(i, el) {
+                    $(el).attr('accept', $default_file_type.toLowerCase() + '/*');
+                 });
+            });
+
             $('.media_file_uploader').each(function(i, el) {
-                $(el).attr('accept', $default_file_type + '/*');
+                $(el).attr('accept', $default_file_type.toLowerCase() + '/*');
             });
         });
     </script>
