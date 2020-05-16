@@ -342,6 +342,15 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+            @php
+                $fileType = $dataTypeContent->type;
+            @endphp
+            var $default_file_type = '{{ $fileType }}';
+
+            $('.media_file_uploader').each(function(i, el) {
+                $(el).attr('accept', $default_file_type + '/*');
+            });
         });
     </script>
 @stop
