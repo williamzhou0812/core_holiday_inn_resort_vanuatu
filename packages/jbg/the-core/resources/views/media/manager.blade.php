@@ -554,21 +554,6 @@
                     if (type == 'image') {
                         return this.endsWithAny(['jpg', 'jpeg', 'png', 'bmp'], file);
                     }
-                    //Todo: add other types
-                } else {
-                    return file.type.includes(type);
-                }
-
-                return false;
-			},
-            filetypeIs: function(file) {
-            type = this.filetype;
-                if (typeof file === 'string') {
-                    //type = this.filetype;
-                    alert(type);
-                    if (type == 'image') {
-                        return this.endsWithAny(['jpg', 'jpeg', 'png', 'bmp'], file);
-                    }
                     else if (type == 'video') {
                         return this.endsWithAny(['mp4', 'avi', 'wmv'], file);
                     }
@@ -578,6 +563,16 @@
                 }
 
                 return false;
+			},
+            filetypeIs: function(file) {
+                type = this.filetype;
+                var vm = this;
+                for(var i=0; i<vm.selected_files.length; i++) {
+                    var cur_filename = vm.selected_files[i].name;
+                    if (!this.fileIs(cur_filename, type))
+                        return false;
+                }
+                return true;
 			},
             getCurrentPath: function() {
                 var path = this.current_folder.replace(this.basePath, '').split('/').filter(function (el) {
