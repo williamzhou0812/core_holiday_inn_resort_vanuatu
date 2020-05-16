@@ -267,6 +267,14 @@
             };
         }
 
+        function convertToDate(str) {
+            var dt_data = str.split(" ");
+            var str_data = dt_data[0].split("/");
+            var date = new Date(parseInt(str_data[2]), parseInt(str_data[1]) - 1, parseInt(str_data[0]));
+            var date_time = new Date(date.toDateString() + " " + dt_data[1] + " " + dt_data[2]);
+            return date_time;
+        }
+
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();
 
@@ -359,6 +367,28 @@
 
             $('.media_file_uploader').each(function(i, el) {
                 $(el).attr('accept', $default_file_type.toLowerCase() + '/*');
+            });
+
+            $('.form-edit-add').on('submit', function() {
+                // validate from and to
+                var from_date = $("input[name='display_from_datepart']").val();
+                var to_date = $("input[name='display_to_datepart']").val();
+                var from_time = $("input[name='display_from_timepart']").val();
+                var to_time = $("input[name='display_to_timepart']").val();
+                if (from_time == '')
+                    from_time = '12:00 AM';
+                if (to_time == '')
+                    to_time = '12:00 AM';
+                if (from_date != '' && to_date != '') {
+                    var from = convertToDate(from_date + " " + from_time);
+                    var to = convertToDate(to_date + " " + to_time);
+                    if (from >= to) {
+                        toastr.error("Display To must be later than Display From.");
+                        return false;
+                    }
+                }
+
+                return true;
             });
         });
     </script>
