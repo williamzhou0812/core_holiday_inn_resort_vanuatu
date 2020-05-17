@@ -68,7 +68,7 @@
                 {{ __('voyager::media.crop') }}
             </button>
         </div>
-        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || (!fileIs(selected_file, 'video') && !fileIs(selected_file, 'image'))" type="button" class="btn btn-default" v-on:click="selectFiles()">
+        <button v-if="allowSelectFiles" :disabled="selected_files.length == 0 || !filetypeIs(selected_file)" type="button" class="btn btn-default" v-on:click="selectFiles()">
             <i class="voyager-check"></i>
             {{ __('voyager::media.select_files') }}
         </button>
@@ -439,6 +439,10 @@
                 type: String,
                 default: ''
             },
+            filetype: {
+                type: String,
+                default: 'image'
+            },
         },
         data: function() {
             return {
@@ -550,12 +554,25 @@
                     if (type == 'image') {
                         return this.endsWithAny(['jpg', 'jpeg', 'png', 'bmp'], file);
                     }
+                    else if (type == 'video') {
+                        return this.endsWithAny(['mp4', 'avi', 'wmv'], file);
+                    }
                     //Todo: add other types
                 } else {
                     return file.type.includes(type);
                 }
 
                 return false;
+			},
+            filetypeIs: function(file) {
+                type = this.filetype;
+                var vm = this;
+                for(var i=0; i<vm.selected_files.length; i++) {
+                    var cur_filename = vm.selected_files[i].name;
+                    if (!this.fileIs(cur_filename, type))
+                        return false;
+                }
+                return true;
 			},
             getCurrentPath: function() {
                 var path = this.current_folder.replace(this.basePath, '').split('/').filter(function (el) {
