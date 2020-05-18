@@ -192,6 +192,45 @@
             $('.form-group').on('click', '.remove-multi-file', deleteHandler('a', true));
             $('.form-group').on('click', '.remove-single-file', deleteHandler('a', false));
 
+            @php
+            $has_from = false;
+            $has_to = false;
+            foreach($dataTypeRows as $row) {
+                if ($row->field == 'display_from') {
+                    $has_from = true;
+                }
+                else if ($row->field == 'display_to') {
+                     $has_to = true;
+                }
+            }
+            @endphp
+
+            var has_from_to_fields = {{ ($has_from && $has_to) ? 'true' : 'false' }};
+
+            function convertToDate(str) {
+                var dt_data = str.split(" ");
+                var str_data = dt_data[0].split("/");
+                var date = new Date(parseInt(str_data[2]), parseInt(str_data[0]) - 1, parseInt(str_data[1]));
+                var date_time = new Date(date.toDateString() + " " + dt_data[1] + " " + dt_data[2]);
+                return date_time;
+            }
+
+            $('.form-edit-add').on('submit',function() {
+                if (has_from_to_fields) {
+                    var from_date = $("input[name='display_from']").val();
+                    var to_date = $("input[name='display_to']").val();
+                    if (from_date != '' && to_date != '') {
+                        var from = convertToDate(from_date);
+                        var to = convertToDate(to_date);
+                        if (from >= to) {
+                            toastr.error("Display To must be later than Display From.");
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            });
+
             $('#confirm_delete').on('click', function(){
                 $.post('{{ route('voyager.'.$dataType->slug.'.media.remove') }}', params, function (response) {
                     if ( response
