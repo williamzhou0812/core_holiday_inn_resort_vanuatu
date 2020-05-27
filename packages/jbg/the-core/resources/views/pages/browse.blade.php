@@ -456,7 +456,7 @@
                         orderingObj['id'] = newOrdering[i];
                         orderingObjs.push(orderingObj);
                     }
-                    $.post('{{ route('voyager.pages.order') }}', {
+                    $.post('{{ route('voyager.pages.order') }}?table={{ $dataType->name }}', {
                         order: JSON.stringify(orderingObjs),
                         _token: '{{ csrf_token() }}'
                     }, function (data) {
