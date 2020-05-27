@@ -64,19 +64,19 @@ class VoyagerSectionController extends VoyagerBaseController
         $tableReference = $dataTypeContent->table_reference;
 
         // get model for table reference
-        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
-        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
-                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
-                : DB::getTablePrefix().$referenceDataType->name
-        );
-        // generate where statement
-        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
-        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
-        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
-        $selectFields = array('id','title','position');
-
         $subSectionDataTypeContent = array();
-        if (isset($tableReference)) {
+        if (isset($tableReference) && !empty($tableReference)) {
+            $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+            $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                    ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                    : DB::getTablePrefix().$referenceDataType->name
+            );
+            // generate where statement
+            $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+            $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+            $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+            $selectFields = array('id','title','position');
+
             // get records from table for display_status == 1
             if ($referenceDisplayFromExists) {
                 $selectFields[] = 'display_from';
@@ -139,20 +139,21 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
-        // get model for table reference
-        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
-        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
-                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
-                : DB::getTablePrefix().$referenceDataType->name
-        );
-        // generate where statement
-        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
-        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
-        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
-        $selectFields = array('id','title','position');
 
         $subSectionDataTypeContent = array();
-        if (isset($tableReference)) {
+        if (isset($tableReference) && !empty($tableReference)) {
+            // get model for table reference
+            $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+            $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                    ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                    : DB::getTablePrefix().$referenceDataType->name
+            );
+            // generate where statement
+            $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+            $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+            $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+            $selectFields = array('id','title','position');
+
             // get records from table for display_status == 1
             if ($referenceDisplayFromExists) {
                 $selectFields[] = 'display_from';
