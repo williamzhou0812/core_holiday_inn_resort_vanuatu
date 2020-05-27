@@ -48,12 +48,7 @@ class VoyagerUserController extends VoyagerBaseController
 
         // check current user role is admin or not
         // get a admin roles ids
-        $adminRoleList = Voyager::model('Role')->where('name', '=', 'JBG Admin')->orWhere('name', '=', 'Admin')->get();
-        $adminRoleIds = array();
-        foreach($adminRoleList as $roleData) {
-            $adminRoleIds[] = $roleData->id;
-        }
-
+        $adminRoleIds = $this->getAdminRoleIds();
         // get current user
         $user = \Auth::user();
         // check if this user is administrator
@@ -222,6 +217,15 @@ class VoyagerUserController extends VoyagerBaseController
         ));
     }
 
+    private function getAdminRoleIds() {
+        $adminRoleList = Voyager::model('Role')->where('name', '=', 'JBG Admin')->orWhere('name', '=', 'Admin')->get();
+        $adminRoleIds = array();
+        foreach($adminRoleList as $roleData) {
+            $adminRoleIds[] = $roleData->id;
+        }
+        return $adminRoleIds;
+    }
+
     public function relation(Request $request)
     {
         $slug = $this->getSlug($request);
@@ -266,11 +270,7 @@ class VoyagerUserController extends VoyagerBaseController
                     if ($options->model == 'TCG\Voyager\Models\Role') {
                         // check current user role is admin or not
                         // get a admin roles ids
-                        $adminRoleList = Voyager::model('Role')->where('name', '=', 'JBG Admin')->orWhere('name', '=', 'Admin')->get();
-                        $adminRoleIds = array();
-                        foreach($adminRoleList as $roleData) {
-                            $adminRoleIds[] = $roleData->id;
-                        }
+                        $adminRoleIds = $this->getAdminRoleIds();
 
                         // get current user
                         $user = \Auth::user();
@@ -322,5 +322,69 @@ class VoyagerUserController extends VoyagerBaseController
 
         // No result found, return empty array
         return response()->json([], 404);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $slug = $this->getSlug($request);
+
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        $isSoftDeleted = false;
+
+        if (strlen($dataType->model_name) != 0) {
+            $model = app($dataType->model_name);
+
+            // Use withTrashed() if model uses SoftDeletes and if toggle is selected
+            if ($model && in_array(SoftDeletes::class, class_uses_recursive($model))) {
+                $model = $model->withTrashed();
+            }
+            if ($dataType->scope && $dataType->scope != '' && method_exists($model, 'scope'.ucfirst($dataType->scope))) {
+                $model = $model->{$dataType->scope}();
+            }
+            $dataTypeContent = call_user_func([$model, 'findOrFail'], $id);
+            if ($dataTypeContent->deleted_at) {
+                $isSoftDeleted = true;
+            }
+        } else {
+            // If Model doest exist, get data from table name
+            $dataTypeContent = DB::table($dataType->name)->where('id', $id)->first();
+        }
+
+        // Replace relationships' keys for labels and create READ links if a slug is provided.
+        $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType, true);
+
+        // If a column has a relationship associated with it, we do not want to show that field
+        $this->removeRelationshipField($dataType, 'read');
+
+        // Check permission
+        $this->authorize('read', $dataTypeContent);
+
+        // get admin roles
+        $adminRoleIds = $this->getAdminRoleIds();
+        // get current user
+        $user = \Auth::user();
+        // check if this user is administrator
+        $userIsAdmin = in_array($user->role_id, $adminRoleIds);
+        if (!$userIsAdmin) {
+            // check if desire user is admin role
+            foreach($adminRoleIds as $roleId) {
+                if ($dataTypeContent->role_id == $roleId) {
+                    // not authorize
+                    abort(404);
+                }
+            }
+        }
+
+        // Check if BREAD is Translatable
+        $isModelTranslatable = is_bread_translatable($dataTypeContent);
+
+        $view = 'voyager::bread.read';
+
+        if (view()->exists("voyager::$slug.read")) {
+            $view = "voyager::$slug.read";
+        }
+
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'isSoftDeleted'));
     }
 }
