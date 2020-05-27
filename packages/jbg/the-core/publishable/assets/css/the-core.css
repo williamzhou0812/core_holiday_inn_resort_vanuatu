@@ -266,3 +266,10 @@ a.permission-deselect-all {
     margin-left: -10px;
     margin-right: -10px;
 }
+
+.new-page-section-selection select {
+    width: auto !important;
+    padding: 4px 6px !important;
+    border: 1px solid #e4eaec;
+    border-radius: 3px;
+}

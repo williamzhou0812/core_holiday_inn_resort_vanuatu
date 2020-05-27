@@ -14,7 +14,7 @@
 @section('page_header')
     <h1 class="page-title">
         <i class="voyager-file-text"></i>
-        {{ __('voyager::generic.'.($edit ? 'edit' : 'add')).' Pages' }}
+        {{ __('voyager::generic.'.($edit ? 'edit' : 'add')).' Page' }}
     </h1>
     @include('voyager::multilingual.language-selector')
 @stop
@@ -48,6 +48,18 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                            @endif
+
+                            @if ($edit == false)
+                            <div class="form-group col-md-12 new-page-section-selection">
+                                <label>Section<br>
+                                    <select id="page_section_selection" name="page_section_type">
+                                        @foreach($sectionDataTypeContent as $sectionData)
+                                        <option value="{{ $sectionData->table_reference }}"  @if($sectionData->table_reference == $dataType->name) selected="selected" @endif>{{ $sectionData->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            </div>
                             @endif
 
                             <!-- Adding / Editing -->
@@ -160,6 +172,13 @@
             $('#confirm_delete_modal').modal('show');
           };
         }
+
+        $('#page_section_selection').on('change', function() {
+            var sectionName = $(this).val();
+            var winUrl = window.location.origin + window.location.pathname;
+            var redirectUrl = winUrl + '?table=' + sectionName;
+            window.location.href = redirectUrl;
+        });
 
         $('document').ready(function () {
             $('.toggleswitch').bootstrapToggle();

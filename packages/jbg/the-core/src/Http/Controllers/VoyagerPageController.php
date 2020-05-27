@@ -481,7 +481,28 @@ class VoyagerPageController extends VoyagerBaseController
 
         $view = 'voyager::pages.edit-add';
 
-        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable'));
+        // load available sections
+        $sectionDataTypeContentList = DB::table('sections')
+            ->select('id','title','position', 'table_reference')
+            ->whereNotNull('table_reference')
+            ->orderBy('position','asc')->get();
+        // check table references permission
+        $sectionDataTypeContent = array();
+        foreach($sectionDataTypeContentList as $tableDataType) {
+            $tblReference = $tableDataType->table_reference;
+            $tblDataType = Voyager::model('DataType')->where('name', '=', $tblReference)->first();
+            if (isset($tblDataType)) {
+                try {
+                    $authResponse = $this->authorize('browse', app($tblDataType->model_name));
+                    $sectionDataTypeContent[] = $tableDataType;
+                }
+                catch(AuthorizationException $authEx) {
+                    // user is not authorized
+                }
+            }
+        }
+
+        return Voyager::view($view, compact('dataType', 'dataTypeContent', 'isModelTranslatable', 'sectionDataTypeContent'));
     }
 
     /**
