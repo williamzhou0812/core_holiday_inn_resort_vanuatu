@@ -64,19 +64,19 @@ class VoyagerSectionController extends VoyagerBaseController
         $tableReference = $dataTypeContent->table_reference;
 
         // get model for table reference
-        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
-        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
-                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
-                : DB::getTablePrefix().$referenceDataType->name
-        );
-        // generate where statement
-        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
-        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
-        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
-        $selectFields = array('id','title','position');
-
         $subSectionDataTypeContent = array();
-        if (isset($tableReference)) {
+        if (isset($tableReference) && !empty($tableReference)) {
+            $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+            $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                    ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                    : DB::getTablePrefix().$referenceDataType->name
+            );
+            // generate where statement
+            $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+            $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+            $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+            $selectFields = array('id','title','position');
+
             // get records from table for display_status == 1
             if ($referenceDisplayFromExists) {
                 $selectFields[] = 'display_from';
@@ -139,20 +139,21 @@ class VoyagerSectionController extends VoyagerBaseController
         // SUB SECTION LOGIC
         // get table references
         $tableReference = $dataTypeContent->table_reference;
-        // get model for table reference
-        $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
-        $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
-                ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
-                : DB::getTablePrefix().$referenceDataType->name
-        );
-        // generate where statement
-        $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
-        $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
-        $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
-        $selectFields = array('id','title','position');
 
         $subSectionDataTypeContent = array();
-        if (isset($tableReference)) {
+        if (isset($tableReference) && !empty($tableReference)) {
+            // get model for table reference
+            $referenceDataType = Voyager::model('DataType')->where('name', '=', $tableReference)->first();
+            $referenceFieldOptions = SchemaManager::describeTable((strlen($referenceDataType->model_name) != 0)
+                    ? DB::getTablePrefix().app($referenceDataType->model_name)->getTable()
+                    : DB::getTablePrefix().$referenceDataType->name
+            );
+            // generate where statement
+            $referenceDisplayStatusExists = ($referenceFieldOptions->has('display_status'));
+            $referenceDisplayFromExists = ($referenceFieldOptions->has('display_from'));
+            $referenceDisplayToExists = ($referenceFieldOptions->has('display_to'));
+            $selectFields = array('id','title','position');
+
             // get records from table for display_status == 1
             if ($referenceDisplayFromExists) {
                 $selectFields[] = 'display_from';
@@ -275,6 +276,52 @@ class VoyagerSectionController extends VoyagerBaseController
         } catch (\Exception $e) {
             // Rollback Transaction
             DB::rollback();
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $slug = $this->getSlug($request);
+
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        // Check permission
+        $this->authorize('add', app($dataType->model_name));
+
+        // Validate fields with ajax
+        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
+        $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
+
+        // set position to zero
+        $newId = $data->id;
+        $pageModel = app($dataType->model_name);
+        $newRecord = $pageModel->findOrFail($newId);
+        // set value
+        $newRecord->position = 0;
+        $newRecord->save();
+        // reordering
+        $allRecords = $pageModel->orderBy('position')->get();
+        $posCount = 1;
+        foreach($allRecords as $record) {
+            $record->position = $posCount++;
+            $record->save();
+        }
+
+        event(new BreadDataAdded($dataType, $data));
+
+        if (!$request->has('_tagging')) {
+            if (auth()->user()->can('browse', $data)) {
+                $redirect = redirect()->route("voyager.{$dataType->slug}.index");
+            } else {
+                $redirect = redirect()->back();
+            }
+
+            return $redirect->with([
+                'message'    => __('voyager::generic.successfully_added_new')." {$dataType->getTranslatedAttribute('display_name_singular')}",
+                'alert-type' => 'success',
+            ]);
+        } else {
+            return response()->json(['success' => true, 'data' => $data]);
         }
     }
 }
