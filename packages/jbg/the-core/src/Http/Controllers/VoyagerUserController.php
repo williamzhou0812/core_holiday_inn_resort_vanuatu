@@ -4,6 +4,7 @@ namespace TCG\Voyager\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mockery\CountValidator\Exception;
 use TCG\Voyager\Facades\Voyager;
 
 class VoyagerUserController extends VoyagerBaseController
@@ -219,5 +220,107 @@ class VoyagerUserController extends VoyagerBaseController
             'showSoftDeleted',
             'showCheckboxColumn'
         ));
+    }
+
+    public function relation(Request $request)
+    {
+        $slug = $this->getSlug($request);
+        $page = $request->input('page');
+        $on_page = 50;
+        $search = $request->input('search', false);
+        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+
+        $method = $request->input('method', 'add');
+
+        $model = app($dataType->model_name);
+        if ($method != 'add') {
+            $model = $model->find($request->input('id'));
+        }
+
+        $this->authorize($method, $model);
+
+        $rows = $dataType->{$method.'Rows'};
+        foreach ($rows as $key => $row) {
+            if ($row->field === $request->input('type')) {
+                $options = $row->details;
+                $model = app($options->model);
+                $skip = $on_page * ($page - 1);
+
+                // If search query, use LIKE to filter results depending on field label
+                if ($search) {
+                    // If we are using additional_attribute as label
+                    if (in_array($options->label, $model->additional_attributes ?? [])) {
+                        $relationshipOptions = $model->all();
+                        $relationshipOptions = $relationshipOptions->filter(function ($model) use ($search, $options) {
+                            return stripos($model->{$options->label}, $search) !== false;
+                        });
+                        $total_count = $relationshipOptions->count();
+                        $relationshipOptions = $relationshipOptions->forPage($page, $on_page);
+                    } else {
+                        $total_count = $model->where($options->label, 'LIKE', '%'.$search.'%')->count();
+                        $relationshipOptions = $model->take($on_page)->skip($skip)
+                            ->where($options->label, 'LIKE', '%'.$search.'%')
+                            ->get();
+                    }
+                } else {
+                    if ($options->model == 'TCG\Voyager\Models\Role') {
+                        // check current user role is admin or not
+                        // get a admin roles ids
+                        $adminRoleList = Voyager::model('Role')->where('name', '=', 'JBG Admin')->orWhere('name', '=', 'Admin')->get();
+                        $adminRoleIds = array();
+                        foreach($adminRoleList as $roleData) {
+                            $adminRoleIds[] = $roleData->id;
+                        }
+
+                        // get current user
+                        $user = \Auth::user();
+                        // check if this user is administrator
+                        $userIsAdmin = in_array($user->role_id, $adminRoleIds);
+                        if (!$userIsAdmin) {
+                            // filter admin roles
+                            $total_count = $model->count();
+                            $relationshipOptions = $model->where('name','!=','JBG Admin')->where('name', '!=', 'Admin')
+                                ->take($on_page)->skip($skip)->get();
+                        }
+                        else {
+                            // fetch as normal
+                            $total_count = $model->count();
+                            $relationshipOptions = $model->take($on_page)->skip($skip)->get();
+                        };
+                    }
+                    else {
+                        // fetch as normal
+                        $total_count = $model->count();
+                        $relationshipOptions = $model->take($on_page)->skip($skip)->get();
+                    }
+                }
+
+                $results = [];
+
+                if (!$row->required && !$search) {
+                    $results[] = [
+                        'id'   => '',
+                        'text' => __('voyager::generic.none'),
+                    ];
+                }
+
+                foreach ($relationshipOptions as $relationshipOption) {
+                    $results[] = [
+                        'id'   => $relationshipOption->{$options->key},
+                        'text' => $relationshipOption->{$options->label},
+                    ];
+                }
+
+                return response()->json([
+                    'results'    => $results,
+                    'pagination' => [
+                        'more' => ($total_count > ($skip + $on_page)),
+                    ],
+                ]);
+            }
+        }
+
+        // No result found, return empty array
+        return response()->json([], 404);
     }
 }
