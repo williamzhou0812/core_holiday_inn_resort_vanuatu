@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Access\AuthorizationException;
+use PHPUnit\Framework\Error\Warning;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Events\BreadDataAdded;
 use TCG\Voyager\Events\BreadDataDeleted;
@@ -549,7 +550,21 @@ class VoyagerPageController extends VoyagerBaseController
         // Validate fields with ajax
         $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
         $data = $this->insertUpdateData($request, $slug, $dataType->addRows, new $dataType->model_name());
-
+        // set position to zero
+        $newId = $data->id;
+        $pageModel = app($dataType->model_name);
+        $newRecord = $pageModel->findOrFail($newId);
+        // set value
+        $newRecord->position = 0;
+        $newRecord->save();
+        // reordering
+        $allRecords = $pageModel->orderBy('position')->get();
+        $posCount = 1;
+        foreach($allRecords as $record) {
+            $record->position = $posCount++;
+            $record->save();
+        }
+        
         event(new BreadDataAdded($dataType, $data));
 
         if (!$request->has('_tagging')) {
