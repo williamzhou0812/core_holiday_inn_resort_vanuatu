@@ -38,6 +38,11 @@
                         </ol>
                     </div>
                 </div>
+                <div style="text-align: center">
+                    <button class="btn btn-info btn-confirm-order" type="button">
+                        Confirm
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -48,6 +53,13 @@
 @section('javascript')
 
 <script>
+$('.btn-confirm-order').on('click', function(e) {
+    var winUrl = window.location.origin + window.location.pathname;
+    var the_arr = winUrl.split('/');
+    the_arr.pop();
+    var redirectUrl =  the_arr.join('/') + window.location.search;
+    window.location.href = redirectUrl;
+});
 $(document).ready(function () {
     $('.dd').nestable({
         maxDepth: 1
